@@ -21,7 +21,6 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
 }
 nav a {
     color: #333;
@@ -37,34 +36,11 @@ header {
     align-items: center;
 }
 main > section:first-child {
-    text-align: center;
-    padding: 60px 20px;
     background-color: white;
 }
 form {
     display: flex;
-    gap: 10px;
     justify-content: center;
-}
-input {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-article {
-    background-color: white;
-    padding: 20px;
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-button {
-    padding: 12px 20px;
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
 }
 @media (max-width: 768px) {
     header {

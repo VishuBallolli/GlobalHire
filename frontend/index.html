@@ -3,71 +3,71 @@
     <head>
         <title>GlobalHire</title>
         <meta charset="UTF-8">
+
         <link rel="stylesheet" href="style.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        >
     </head>
+
     <body>
-<header>
-<h1>GlobalHire</h1>
-<nav class="navbar navbar-expand-lg gap-3">
-  <a href="#">Home</a>
-    <a href="#">Jobs</a>
-    <a href="#">Login</a>
-    <a href="#">Register</a>
-</nav>
-</header>
 
-<main class="container">
-<section class="text-center py-5">    
-    <h2>Find Your Next International Opportunity</h2>
-    <p>Discover jobs and career opportunities around the world.</p>
-</section>
+        <header>
+            <h1 id="main-title">GlobalHire</h1>
 
-<section>
-    <h2>Search Jobs</h2>
+            <nav class="navbar navbar-expand-lg gap-3">
+                <a href="#">Home</a>
+                <a href="#">Jobs</a>
+                <a href="#">Login</a>
+                <a href="#">Register</a>
+            </nav>
+        </header>
 
-    <form class="gap-2">
-<input type="text" class="form-control" placeholder="Job title or skill">
-<input type="text" class="form-control" placeholder="Country">
-        <button type="submit"  class="btn btn-primary">Search</button>
-    </form>
-</section>
+        <!-- JavaScript will create job cards here -->
+        <section id="jobs-container"></section>
 
-<section>
-<h2 class="text-center mb-4">Featured Jobs</h2>   
- <div class="row">
-      <article class="col-12 col-md-6">
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title">Software Developer</h3>
-            <p class="card-text">Company: Tech Solutions</p>
-            <p class="card-text">Location: Germany</p>
-            <a href="#" class="btn btn-primary">View Job</a>
-        </div>
-    </div>
-</article>
+        <main class="container">
 
-       <article class="col-12 col-md-6">
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title">Python Developer</h3>
-            <p class="card-text">Company: Global Systems</p>
-            <p class="card-text">Location: Canada</p>
-            <a href="#" class="btn btn-primary">View Job</a>
-        </div>
-    </div>
-</article>
+            <!-- Hero Section -->
+            <section class="text-center py-5">
+                <h2>Find Your Next International Opportunity</h2>
 
+                <p>
+                    Discover jobs and career opportunities around the world.
+                </p>
+            </section>
 
-    </div>
-</section>
+            <!-- Search Jobs -->
+            <section>
+                <h2>Search Jobs</h2>
 
-</main>
+<form id="job-search-form" class="gap-2">   
+     <input
+    id="job-search"
+    type="text"
+    class="form-control"
+    placeholder="Job title or skill">
 
-<footer>
-<p>&copy; 2026 GlobalHire. All rights reserved.</p>
-</footer>
+<input
+    id="country-search"
+    type="text"
+    class="form-control"
+    placeholder="Country">
+
+<button id="search-button" type="submit" class="btn btn-primary">
+    Search
+</button>                </form>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>&copy; 2026 GlobalHire. All rights reserved.</p>
+        </footer>
+
+        <script src="script.js"></script>
 
     </body>
-    <script src="script.js"></script>
 </html>

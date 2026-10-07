@@ -1,99 +1,47 @@
-console.log("GlobalHire JavaScript is working!");
-let jobTitle = "Software Developer";
+const jobsContainer = document.getElementById("jobs-container");
 
-console.log(jobTitle);
+const jobCard = document.createElement("div");
+jobCard.textContent = "Software Developer - Germany";
+jobsContainer.appendChild(jobCard);
 
-let country = "Germany";
-let role = "Backend Developer";
+const secondJobCard = document.createElement("div");
+secondJobCard.textContent = "Python Developer - Canada";
+jobsContainer.appendChild(secondJobCard);
 
-console.log(country);
-console.log(role);
+jobCard.classList.add("card");
 
-let savedJobs = 0;
-console.log(savedJobs);
-
-savedJobs = 3;
-console.log(savedJobs);
-
-const companyName = "GlobalHire";
-console.log(companyName);
-
-const platformName = "GlobalHire";
-const mainCountry = "Germany";
-
-console.log(platformName);
-console.log(mainCountry);
-
-let jobCount = 25;
-let isLoggedIn = true;
-let hasApplied = false;
-
-console.log(typeof jobCount);
-console.log(typeof isLoggedIn);
-console.log(typeof country);
-
-let userName;
-
-console.log(userName);
-console.log(typeof userName);
-
-let userEmail = "Vishu120@gmail.com";
-let userPhone = "1234567890";
-
-console.log(typeof userEmail);
-console.log(typeof userPhone);
-
-let profilePhoto = null;
-
-console.log(profilePhoto);
-console.log(typeof profilePhoto);
-
-const job = {
-    title: "Software Developer",
-    company: "Tech Solutions",
-    country: "Germany",
-    salary: 50000
-};
-
-console.log(job.title);
-console.log(job.country);
-console.log(job.company);
-console.log(job.salary);
-
-job.salary = 60000;
-
-console.log(job.salary);
-
-job.country = "Russia";
-
-console.log(job.country);
-
-const skills = ["HTML","CSS","JavaScript","Node.js","MySQL"];
+const searchButton = document.getElementById("search-button");
+console.log(searchButton);
 
 
-console.log(skills[0]);
-console.log(skills[1]);
-console.log(skills[2]);
-console.log(skills[3]);
-console.log(skills[4]);
 
-console.log(skills.length);
+const jobSearch = document.getElementById("job-search");
+jobSearch.addEventListener("input", function() {
+    console.log("User is typing");
+});
 
-skills.push("Express.js","Docker");
-console.log(skills.length);
+const countrySearch = document.getElementById("country-search");
 
-skills.pop();
-console.log(skills);
-console.log(skills.length);
+countrySearch.addEventListener("change", function() {
+    console.log("Country changed");
 
-function greetUser() {
-    console.log("Welcome to GlobalHire!");
-}
 
-greetUser();
+});
 
-function welcomeUser(name) {
-    console.log("welcome, " + name +  "!");
-}
+const jobSearchForm = document.getElementById("job-search-form");
+console.log(jobSearchForm);
 
-welcomeUser("vishu");
+jobSearchForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    console.log("Search form submitted!");
+
+    const jobTitle = jobSearch.value;
+    console.log(jobTitle);
+
+        const country = countrySearch.value;
+           console.log(country);
+
+
+           console.log("Searching for " + jobTitle + " jobs in " + country);
+});

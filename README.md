@@ -30,3 +30,13 @@ Postman
 Additional:
 Python
 Git & GitHub
+
+## Development Progress
+
+Day 5 — JavaScript DOM Events
+
+- Learned DOM events
+- Practiced click, input, change, and submit events
+- Learned addEventListener()
+- Learned event.preventDefault()
+- Built a basic job search interaction

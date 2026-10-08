@@ -1,33 +1,52 @@
 const jobsContainer = document.getElementById("jobs-container");
 
+const jobs = [
+    {
+        title: "Software Developer",
+        country: "Germany"
+    },
+    {
+        title: "Python Developer",
+        country: "Canada"
+    },
+    {
+        title: "Backend Developer",
+        country: "Japan"
+    },
+    {
+    title: "Frontend Developer",
+    country: "USA"
+    }
+];
 
-const jobCard = document.createElement("div");
-jobCard.textContent = "Software Developer - Germany";
-jobsContainer.appendChild(jobCard);
+jobs.forEach(function(job) {
+    const jobCard = document.createElement("div");
 
-const secondJobCard = document.createElement("div");
-secondJobCard.textContent = "Python Developer - Canada";
-jobsContainer.appendChild(secondJobCard);
+jobCard.classList.add("card", "p-3", "mb-3", "mx-auto");
+ 
+const jobTitle = document.createElement("h5");
+    jobTitle.textContent = job.title;
 
-jobCard.classList.add("card");
+    jobCard.appendChild(jobTitle);
 
-const searchButton = document.getElementById("search-button");
-console.log(searchButton);
+    const jobCountry = document.createElement("p");
+    jobCountry.textContent = job.country;
+
+    jobCard.appendChild(jobCountry);
+
+    jobsContainer.appendChild(jobCard);
+});
+
+
 
 const jobSearch = document.getElementById("job-search");
 
-jobSearch.addEventListener("input", function() {
-    console.log("User is typing");
-});
+
 
 const countrySearch = document.getElementById("country-search");
 
-countrySearch.addEventListener("change", function() {
-    console.log("Country changed");
-});
 
 const jobSearchForm = document.getElementById("job-search-form");
-console.log(jobSearchForm);
 
 const searchError = document.getElementById("search-error");
 const searchSuccess = document.getElementById("search-success");
@@ -38,19 +57,43 @@ jobSearchForm.addEventListener("submit", function(event) {
     searchError.textContent = "";
     searchSuccess.textContent = "";
 
-    console.log("Search form submitted!");
 
     const jobTitle = jobSearch.value.trim();
-    console.log(jobTitle);
 
     const country = countrySearch.value.trim();
-    console.log(country);
 
     if (jobTitle === "" || country === "") {
-        console.log("Please enter job title and country");
         searchError.textContent = "Please enter job title and country";
     } else {
-        console.log("Search input is valid");
-        searchSuccess.textContent = "Search input is valid!";
+
+        jobsContainer.textContent = "";
+
+        const matchingJobs = jobs.filter(function(job) {
+        return job.title === jobTitle && job.country === country;     
+       });
+
+        
+
+if (matchingJobs.length === 0) {
+searchError.textContent = "No jobs found for this search.";
+}
+
+ matchingJobs.forEach(function(job) {
+    const jobCard = document.createElement("div");
+
+    jobCard.classList.add("card", "p-3", "mb-3", "mx-auto");
+
+    const jobTitleElement = document.createElement("h5");
+    jobTitleElement.textContent = job.title;
+
+    jobCard.appendChild(jobTitleElement);
+
+    const jobCountry = document.createElement("p");
+    jobCountry.textContent = job.country;
+
+    jobCard.appendChild(jobCountry);
+
+    jobsContainer.appendChild(jobCard);
+});
     }
 });

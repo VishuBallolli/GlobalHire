@@ -1,0 +1,9 @@
+{
+  "name": "globalhire-backend",
+  "version": "1.0.0",
+  "description": "Backend for the GlobalHire project",
+  "main": "hello.js",
+  "scripts": {
+    "start": "node hello.js"
+  }
+}

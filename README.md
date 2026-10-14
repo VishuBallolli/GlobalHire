@@ -127,4 +127,16 @@ Build a platform where job seekers can find international job opportunities and 
 
 ## Repository
 
-GitHub: https://github.com/VishuBallolli/GlobalHire
+GitHub: https://github.com/VishuBallolli/GlobalHire 
+
+### Day 12 — MySQL Database Fundamentals
+
+- Started MySQL using XAMPP and opened phpMyAdmin.
+- Created the `globalhire_db` database.
+- Created the `jobs` table with `id`, `title`, `country`, and `salary` columns.
+- Configured `id` as the primary key with auto-increment.
+- Inserted sample job records using `INSERT INTO`.
+- Retrieved job records using `SELECT`.
+- Verified that the database stores and returns records successfully.
+
+**Next:** Learn SQL filtering and modification, then connect MySQL to the Node.js/Express backend.

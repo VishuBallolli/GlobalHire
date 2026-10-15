@@ -1,10 +1,16 @@
-# GlobalHire
+# GlobalHire 🌍
 
-GlobalHire is an international job and recruitment platform.
+**An International Job Search and Recruitment Platform**
+
+GlobalHire is a learning-driven full-stack web application designed to connect job seekers with international job opportunities and help employers manage job listings and applicants.
 
 ## Project Goal
 
-Build a platform where job seekers can find international job opportunities and employers can post jobs and manage applicants.
+Build a responsive, secure, and scalable platform where:
+
+- Job seekers can discover international opportunities, manage profiles, and track applications.
+- Employers can publish job listings and review applicants.
+- Administrators can manage users, companies, jobs, and applications.
 
 ## User Roles
 
@@ -15,24 +21,35 @@ Build a platform where job seekers can find international job opportunities and 
 ## Technologies
 
 **Frontend**
-- HTML
-- CSS
-- Bootstrap
+- HTML5
+- CSS3
+- Bootstrap 5
 - JavaScript
 
 **Backend**
 - Node.js
 - Express.js
+- REST API development
+- `mysql2/promise` for MySQL connectivity
+- `dotenv` for environment configuration
 
 **Database**
-- MySQL (integration pending)
+- MySQL
+- XAMPP and phpMyAdmin for local database management
+- SQL queries and parameterized database operations
 
-**Testing**
+**Testing and Developer Tools**
 - Postman
-
-**Additional Tools and Technologies**
-- Python (planned for future features)
 - Git and GitHub
+- Git Bash
+- VS Code / Kiro
+
+**Planned Technologies**
+- TypeScript, React, and Next.js
+- Automated testing
+- Docker and CI/CD
+- Cloud deployment
+- Python-based job matching and AI-powered features
 
 ## Development Progress
 
@@ -81,7 +98,7 @@ Build a platform where job seekers can find international job opportunities and 
 ### Day 8 — Node.js Fundamentals
 - Learned the role of Node.js in backend development.
 - Compared browser JavaScript with Node.js.
-- Practiced using Node.js and npm commands.
+- Practiced Node.js and npm commands.
 - Created and executed `backend/hello.js`.
 - Learned the purpose of `package.json`, npm scripts, and dependencies.
 
@@ -91,52 +108,157 @@ Build a platform where job seekers can find international job opportunities and 
 - Implemented a welcome route at `/`.
 - Created `GET /api/jobs` to return sample job listings as JSON.
 - Created `GET /api/health` to check server status.
-- Tested the server locally in a browser.
-- Committed and pushed the backend changes to GitHub.
+- Tested the server locally.
 
 ### Day 10 — HTTP Methods, REST APIs, and Postman
 - Learned HTTP and client-server communication.
-- Studied the HTTP methods `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`.
-- Learned REST API routes and HTTP status codes, including `200`, `201`, `400`, `401`, `404`, and `500`.
-- Practiced understanding URL components, including protocol, host, port, and path.
-- Tested `GET /api/health` using Postman.
-- Tested `GET /api/jobs` using Postman.
-- Inspected the JSON responses and verified that the existing endpoints worked.
-- Checked Git status and confirmed the local repository was synchronized with GitHub.
+- Studied `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`.
+- Practiced REST API routes and HTTP status codes, including `200`, `201`, `400`, `401`, `404`, and `500`.
+- Learned URL components, including protocol, host, port, and path.
+- Tested backend endpoints using Postman.
+- Inspected JSON responses and verified endpoint behavior.
 
-## Current Project Status
-
-- Responsive frontend built with HTML, CSS, Bootstrap, and JavaScript.
-- Node.js and Express.js backend running locally.
-- Sample job listings currently returned as hardcoded JSON.
-- Health-check endpoint available.
-- MySQL database integration is pending.
-- Full CRUD operations, authentication, and authorization are pending.
-- Python-based job matching and recommendation features are planned for a future phase.
-
-## Planned Next Steps
-
-1. Learn route parameters, query parameters, and request bodies.
-2. Implement and test additional REST API operations.
-3. Integrate MySQL with the Node.js backend.
-4. Build complete job CRUD functionality.
-5. Add authentication, authorization, and input validation.
-6. Expand automated and manual API testing.
-7. Develop future Python-based job-matching features.
-8. Improve deployment, documentation, and security.
-
-## Repository
-
-GitHub: https://github.com/VishuBallolli/GlobalHire 
+### Day 11 — Express Request Handling
+- Practiced Express route parameters and query parameters.
+- Learned how to read request bodies using `express.json()`.
+- Implemented job-related API routes.
+- Practiced sending JSON responses and using appropriate HTTP status codes.
+- Tested requests and responses using Postman.
 
 ### Day 12 — MySQL Database Fundamentals
-
 - Started MySQL using XAMPP and opened phpMyAdmin.
 - Created the `globalhire_db` database.
 - Created the `jobs` table with `id`, `title`, `country`, and `salary` columns.
-- Configured `id` as the primary key with auto-increment.
+- Configured `id` as an auto-incrementing primary key.
 - Inserted sample job records using `INSERT INTO`.
 - Retrieved job records using `SELECT`.
-- Verified that the database stores and returns records successfully.
+- Exported the database structure and sample data for the project.
 
-**Next:** Learn SQL filtering and modification, then connect MySQL to the Node.js/Express backend.
+### Day 13 — SQL Data Manipulation
+- Practiced filtering records using `WHERE`.
+- Sorted job records using `ORDER BY`, `ASC`, and `DESC`.
+- Practiced salary comparisons and conditional queries.
+- Learned how `UPDATE` modifies records and `DELETE` removes records.
+- Studied the importance of `WHERE` clauses to avoid unintended data changes.
+
+### Day 14 — Node.js and MySQL Integration
+- Installed `mysql2` and `dotenv` in the backend.
+- Created `backend/db.js` to configure a reusable MySQL connection pool.
+- Configured database connection settings through environment variables.
+- Kept local `.env` configuration excluded from Git.
+- Created `backend/test-db.js` to verify the database connection.
+- Successfully connected the Express backend to `globalhire_db`.
+- Updated `GET /api/jobs` to retrieve actual job records from MySQL.
+- Added database error handling and tested the endpoint using Postman.
+
+### Day 15 — Database-Backed CRUD APIs
+- Implemented database-backed job creation using `POST /api/jobs`.
+- Implemented job retrieval using `GET /api/jobs` and `GET /api/jobs/:id`.
+- Implemented job updates using `PUT /api/jobs/:id`.
+- Implemented job deletion using `DELETE /api/jobs/:id`.
+- Used parameterized SQL queries for database operations.
+- Added input validation for job title, country, and salary.
+- Practiced handling `400`, `404`, and `500` responses.
+- Verified that created and updated records persist in MySQL.
+- Confirmed that deleted jobs return `404 Not Found` when retrieved.
+- Tested deletion of nonexistent jobs using Postman.
+- Committed the implementation with Git.
+
+## Current Project Status
+
+**Completed and practiced**
+- Responsive frontend using HTML, CSS, Bootstrap, and JavaScript.
+- Local Node.js and Express backend.
+- MySQL database setup and connection.
+- Database-backed job listing and individual job retrieval.
+- Job creation, updating, and deletion through REST APIs.
+- Basic request validation and error handling.
+- Manual API testing using Postman.
+- Git-based version control and GitHub workflow.
+
+**Not yet implemented or planned**
+- Authentication and authorization.
+- Job seeker and employer account management.
+- Persistent application tracking and applicant management.
+- Automated unit, integration, and end-to-end tests.
+- Production deployment, Docker, and CI/CD.
+- Advanced security, logging, and monitoring.
+- Python-based job matching and AI-assisted recommendations.
+
+The current implementation is a learning-stage project. Features will be expanded and tested incrementally as development continues.
+
+## Planned Next Steps
+
+1. Strengthen request validation, error handling, and API security.
+2. Improve job ID validation and handle invalid route parameters.
+3. Add automated tests for backend routes and database operations.
+4. Improve database schema design and learn SQL joins, indexes, and transactions.
+5. Add authentication and role-based authorization.
+6. Develop job seeker profiles, employer workflows, and application management.
+7. Learn TypeScript and React for a more advanced frontend.
+8. Add Docker, GitHub Actions CI/CD, and cloud deployment.
+9. Explore Python-based matching, AI integration, and recommendation features.
+10. Improve documentation, architecture, accessibility, and performance.
+
+## Repository Structure
+
+```text
+GlobalHire/
+├── frontend/
+├── backend/
+│   ├── server.js
+│   ├── db.js
+│   ├── test-db.js
+│   ├── package.json
+│   └── .env                 # Local configuration; do not commit
+├── database/
+├── docs/
+├── python-service/
+├── .gitignore
+└── README.md
+```
+
+*Note: The structure may evolve as new features and tests are added.*
+
+## Running the Backend Locally
+
+### Prerequisites
+- Node.js and npm
+- XAMPP with MySQL
+- The `globalhire_db` database and `jobs` table
+
+### Setup
+
+1. Start MySQL in XAMPP.
+2. Configure the local environment variables in `backend/.env`.
+3. Install backend dependencies if needed:
+
+   ```bash
+   npm install --prefix backend
+   ```
+
+4. Start the backend from the project root:
+
+   ```bash
+   npm start --prefix backend
+   ```
+
+5. Test the API using Postman:
+
+   ```text
+   GET http://localhost:3000/api/health
+   GET http://localhost:3000/api/jobs
+   GET http://localhost:3000/api/jobs/1
+   ```
+
+**Important:** Do not commit `.env` files, database passwords, or other secrets to GitHub.
+
+## Learning Approach
+
+GlobalHire is being developed incrementally as a practical software-engineering learning project. Each stage focuses on understanding the concepts, implementing working features, testing behavior, documenting changes, and using Git to track progress.
+
+The longer-term goal is to develop strong full-stack engineering skills, including testing, DevOps, cloud deployment, security, and maintainable software design.
+
+## Repository
+
+GitHub: [VishuBallolli/GlobalHire](https://github.com/VishuBallolli/GlobalHire)

@@ -1,4 +1,6 @@
+require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
+const pool = require("./db");
 
 const app = express();
 app.use(express.json());
@@ -8,19 +10,25 @@ app.get("/", function(req, res) {
     res.send("Welcome to GlobalHire Backend!");
 });
 
-app.get("/api/jobs", function(req, res) {
-    res.json([
-        {
-            id: 1,
-            title: "Python Developer",
-            country: "Canada"
-        },
-        {
-            id: 2,
-            title: "Software Developer",
-            country: "Germany"
-        }
-    ]);
+app.get("/api/jobs", async function(req, res) {
+    try {
+        // Query the database for all jobs
+        const [rows] = await pool.query(
+            "SELECT id, title, country, salary FROM jobs ORDER BY id"
+        );
+        
+        // Return the jobs as JSON
+        res.json(rows);
+    } catch (error) {
+        // Log the error for debugging
+        console.error("Database error:", error.message);
+        
+        // Return a safe error message to the client
+        res.status(500).json({
+            status: "error",
+            message: "Failed to retrieve jobs from database"
+        });
+    }
 });
 
 

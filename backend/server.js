@@ -6,6 +6,29 @@ const app = express();
 app.use(express.json());
 const PORT = 3000;
 
+/**
+ * Validates that a job ID is a positive integer
+ * @param {string} id - The ID from req.params.id
+ * @returns {object|null} - Returns error response object if invalid, null if valid
+ */
+function validateJobId(id) {
+    // Convert to number and check if it's a positive integer
+    const numId = Number(id);
+
+    // Check for: NaN, non-integer, zero, negative, or Infinity
+    if (!Number.isInteger(numId) || numId <= 0 || !Number.isFinite(numId)) {
+        return {
+            status: 400,
+            json: {
+                status: "error",
+                message: "Job ID must be a positive integer"
+            }
+        };
+    }
+
+    return null; // Valid ID
+}
+
 app.get("/", function(req, res) {
     res.send("Welcome to GlobalHire Backend!");
 });
@@ -16,13 +39,13 @@ app.get("/api/jobs", async function(req, res) {
         const [rows] = await pool.query(
             "SELECT id, title, country, salary FROM jobs ORDER BY id"
         );
-        
+
         // Return the jobs as JSON
         res.json(rows);
     } catch (error) {
         // Log the error for debugging
         console.error("Database error:", error.message);
-        
+
         // Return a safe error message to the client
         res.status(500).json({
             status: "error",
@@ -34,7 +57,13 @@ app.get("/api/jobs", async function(req, res) {
 
 app.get("/api/jobs/:id", async (req, res) => {
     try {
-        const jobId = req.params.id;
+        // Validate ID first
+        const validationError = validateJobId(req.params.id);
+        if (validationError) {
+            return res.status(validationError.status).json(validationError.json);
+        }
+
+        const jobId = Number(req.params.id);
 
         const [rows] = await pool.execute(
             "SELECT id, title, country, salary FROM jobs WHERE id = ?",
@@ -147,7 +176,13 @@ app.post("/api/jobs", async (req, res) => {
 
 app.put("/api/jobs/:id", async (req, res) => {
     try {
-        const jobId = req.params.id;
+        // Validate ID first
+        const validationError = validateJobId(req.params.id);
+        if (validationError) {
+            return res.status(validationError.status).json(validationError.json);
+        }
+
+        const jobId = Number(req.params.id);
         const { title, country, salary } = req.body;
 
         // Validate title (required, non-empty string)
@@ -208,7 +243,7 @@ app.put("/api/jobs/:id", async (req, res) => {
             status: "success",
             message: "Job updated successfully",
             data: {
-                id: parseInt(jobId),
+                id: jobId,
                 title: title.trim(),
                 country: country.trim(),
                 salary: salaryValue
@@ -228,7 +263,13 @@ app.put("/api/jobs/:id", async (req, res) => {
 
 app.delete("/api/jobs/:id", async (req, res) => {
     try {
-        const jobId = req.params.id;
+        // Validate ID first
+        const validationError = validateJobId(req.params.id);
+        if (validationError) {
+            return res.status(validationError.status).json(validationError.json);
+        }
+
+        const jobId = Number(req.params.id);
 
         // First, check if the job exists
         const [existingRows] = await pool.execute(

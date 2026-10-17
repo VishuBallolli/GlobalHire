@@ -33,7 +33,7 @@ app.get("/", function(req, res) {
     res.send("Welcome to GlobalHire Backend!");
 });
 
-app.get("/api/jobs", async function(req, res) {
+app.get("/api/jobs", async function(req, res, next) {
     try {
         // Query the database for all jobs
         const [rows] = await pool.query(
@@ -43,19 +43,12 @@ app.get("/api/jobs", async function(req, res) {
         // Return the jobs as JSON
         res.json(rows);
     } catch (error) {
-        // Log the error for debugging
-        console.error("Database error:", error.message);
-
-        // Return a safe error message to the client
-        res.status(500).json({
-            status: "error",
-            message: "Failed to retrieve jobs from database"
-        });
+        next(error);
     }
 });
 
 
-app.get("/api/jobs/:id", async (req, res) => {
+app.get("/api/jobs/:id", async (req, res, next) => {
     try {
         // Validate ID first
         const validationError = validateJobId(req.params.id);
@@ -79,12 +72,7 @@ app.get("/api/jobs/:id", async (req, res) => {
 
         return res.status(200).json(rows[0]);
     } catch (error) {
-        console.error("Database error:", error.message);
-
-        return res.status(500).json({
-            status: "error",
-            message: "Failed to retrieve job from database"
-        });
+        next(error);
     }
 });
 
@@ -107,7 +95,7 @@ app.get("/api/health", function(req, res) {
 });
 
 
-app.post("/api/jobs", async (req, res) => {
+app.post("/api/jobs", async (req, res, next) => {
     try {
         const { title, country, salary } = req.body;
 
@@ -163,18 +151,11 @@ app.post("/api/jobs", async (req, res) => {
             }
         });
     } catch (error) {
-        // Log the error for debugging
-        console.error("Database error:", error.message);
-
-        // Return a safe error message to the client
-        return res.status(500).json({
-            status: "error",
-            message: "Failed to create job in database"
-        });
+        next(error);
     }
 });
 
-app.put("/api/jobs/:id", async (req, res) => {
+app.put("/api/jobs/:id", async (req, res, next) => {
     try {
         // Validate ID first
         const validationError = validateJobId(req.params.id);
@@ -250,18 +231,11 @@ app.put("/api/jobs/:id", async (req, res) => {
             }
         });
     } catch (error) {
-        // Log the error for debugging
-        console.error("Database error:", error.message);
-
-        // Return a safe error message to the client
-        return res.status(500).json({
-            status: "error",
-            message: "Failed to update job in database"
-        });
+        next(error);
     }
 });
 
-app.delete("/api/jobs/:id", async (req, res) => {
+app.delete("/api/jobs/:id", async (req, res, next) => {
     try {
         // Validate ID first
         const validationError = validateJobId(req.params.id);
@@ -296,25 +270,30 @@ app.delete("/api/jobs/:id", async (req, res) => {
             message: "Job deleted successfully"
         });
     } catch (error) {
-        // Log the error for debugging
-        console.error("Database error:", error.message);
-
-        // Return a safe error message to the client
-        return res.status(500).json({
-            status: "error",
-            message: "Failed to delete job from database"
-        });
+        next(error);
     }
 });
 
+/**
+ * Centralized error-handling middleware
+ * Must have 4 parameters (err, req, res, next) for Express to recognize it as error handler
+ */
+app.use((err, req, res, next) => {
+    // Log detailed error information server-side for debugging
+    console.error("=== Error Details ===");
+    console.error("Message:", err.message);
+    console.error("Stack:", err.stack);
+    console.error("Request:", req.method, req.url);
+    console.error("====================");
+
+    // Send safe, generic error response to client
+    // Never expose stack traces, SQL queries, or database connection details
+    res.status(500).json({
+        status: "error",
+        message: "An unexpected error occurred"
+    });
+});
 
 app.listen(PORT, function() {
     console.log(`GlobalHire server running at http://localhost:${PORT}`);
 });
-
-
-
-
-
-
-

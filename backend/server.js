@@ -76,15 +76,45 @@ app.get("/api/jobs/:id", async (req, res, next) => {
     }
 });
 
-app.get("/api/search", (req, res) => {
-    const title = req.query.title;
-    const country = req.query.country;
+app.get("/api/search", async (req, res, next) => {
+    try {
+        // Read and trim query parameters, treating empty strings as absent
+        const title = req.query.title?.trim() || undefined;
+        const country = req.query.country?.trim() || undefined;
 
-    res.json({
-        message: "Search filters received successfully",
-        title: title,
-        country: country
-    });
+        // Build the SQL query dynamically based on provided filters
+        let sql = "SELECT id, title, country, salary FROM jobs";
+        const params = [];
+        const conditions = [];
+
+        // Add title filter if provided
+        if (title) {
+            conditions.push("title LIKE ?");
+            params.push(`%${title}%`);
+        }
+
+        // Add country filter if provided
+        if (country) {
+            conditions.push("country LIKE ?");
+            params.push(`%${country}%`);
+        }
+
+        // Combine conditions with AND if any filters exist
+        if (conditions.length > 0) {
+            sql += " WHERE " + conditions.join(" AND ");
+        }
+
+        // Add ordering for consistent results
+        sql += " ORDER BY id";
+
+        // Execute the parameterized query
+        const [rows] = await pool.query(sql, params);
+
+        // Return matching jobs
+        res.status(200).json(rows);
+    } catch (error) {
+        next(error);
+    }
 });
 
 app.get("/api/health", function(req, res) {

@@ -1,22 +1,17 @@
-
 require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
 const pool = require("./db");
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ strict: false }));
 const PORT = 3000;
 
 /**
- * Validates that a job ID is a positive integer
- * @param {string} id - The ID from req.params.id
- * @returns {object|null} - Returns error response object if invalid, null if valid
+ * Validates that a job ID is a positive integer.
  */
 function validateJobId(id) {
-    // Convert to number and check if it's a positive integer
     const numId = Number(id);
 
-    // Check for: NaN, non-integer, zero, negative, or Infinity
     if (!Number.isInteger(numId) || numId <= 0 || !Number.isFinite(numId)) {
         return {
             status: 400,
@@ -27,7 +22,7 @@ function validateJobId(id) {
         };
     }
 
-    return null; // Valid ID
+    return null;
 }
 
 app.get("/", function(req, res) {
@@ -36,12 +31,10 @@ app.get("/", function(req, res) {
 
 app.get("/api/jobs", async function(req, res, next) {
     try {
-        // Query the database for all jobs
         const [rows] = await pool.query(
             "SELECT id, title, country, salary FROM jobs ORDER BY id"
         );
 
-        // Return the jobs as JSON
         res.json(rows);
     } catch (error) {
         next(error);
@@ -50,8 +43,8 @@ app.get("/api/jobs", async function(req, res, next) {
 
 app.get("/api/jobs/:id", async (req, res, next) => {
     try {
-        // Validate ID first
         const validationError = validateJobId(req.params.id);
+
         if (validationError) {
             return res.status(validationError.status).json(validationError.json);
         }
@@ -78,39 +71,32 @@ app.get("/api/jobs/:id", async (req, res, next) => {
 
 app.get("/api/search", async (req, res, next) => {
     try {
-        // Read and trim query parameters, treating empty strings as absent
         const title = req.query.title?.trim() || undefined;
         const country = req.query.country?.trim() || undefined;
 
-        // Build the SQL query dynamically based on provided filters
         let sql = "SELECT id, title, country, salary FROM jobs";
         const params = [];
         const conditions = [];
 
-        // Add title filter if provided
         if (title) {
             conditions.push("title LIKE ?");
             params.push(`%${title}%`);
+
         }
 
-        // Add country filter if provided
         if (country) {
             conditions.push("country LIKE ?");
             params.push(`%${country}%`);
         }
 
-        // Combine conditions with AND if any filters exist
         if (conditions.length > 0) {
             sql += " WHERE " + conditions.join(" AND ");
         }
 
-        // Add ordering for consistent results
         sql += " ORDER BY id";
 
-        // Execute the parameterized query
         const [rows] = await pool.query(sql, params);
 
-        // Return matching jobs
         res.status(200).json(rows);
     } catch (error) {
         next(error);
@@ -126,9 +112,19 @@ app.get("/api/health", function(req, res) {
 
 app.post("/api/jobs", async (req, res, next) => {
     try {
-        const { title, country, salary } = req.body;
+        // Ensure the request body is a JSON object.
+        if (
+            req.body === null ||
+            typeof req.body !== "object" ||
+            Array.isArray(req.body)
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "Request body must be a JSON object"
+            });
+        }
 
-        // Validate title (required, non-empty string)
+        const { title, country, salary } = req.body;
         if (!title || typeof title !== 'string' || title.trim() === '') {
             return res.status(400).json({
                 status: "error",
@@ -136,7 +132,6 @@ app.post("/api/jobs", async (req, res, next) => {
             });
         }
 
-        // Validate country (required, non-empty string)
         if (!country || typeof country !== 'string' || country.trim() === '') {
             return res.status(400).json({
                 status: "error",
@@ -144,17 +139,21 @@ app.post("/api/jobs", async (req, res, next) => {
             });
         }
 
-        // Validate salary (optional, but if provided must be a finite non-negative number, not a string)
         let salaryValue = null;
+
         if (salary !== null && salary !== undefined) {
-            if (typeof salary === 'string') {
+            if (typeof salary === "string") {
                 return res.status(400).json({
                     status: "error",
                     message: "Salary must be a number, not a string"
                 });
             }
 
-            if (typeof salary !== 'number' || !Number.isFinite(salary) || salary < 0) {
+            if (
+                typeof salary !== "number" ||
+                !Number.isFinite(salary) ||
+                salary < 0
+            ) {
                 return res.status(400).json({
                     status: "error",
                     message: "Salary must be null or a finite, non-negative number"
@@ -164,13 +163,11 @@ app.post("/api/jobs", async (req, res, next) => {
             salaryValue = salary;
         }
 
-        // Insert the new job into the database
         const [result] = await pool.execute(
             "INSERT INTO jobs (title, country, salary) VALUES (?, ?, ?)",
             [title.trim(), country.trim(), salaryValue]
         );
 
-        // Return success response with the new job ID
         return res.status(201).json({
             status: "success",
             message: "Job created successfully",
@@ -188,42 +185,56 @@ app.post("/api/jobs", async (req, res, next) => {
 
 app.put("/api/jobs/:id", async (req, res, next) => {
     try {
-        // Validate ID first
         const validationError = validateJobId(req.params.id);
+
         if (validationError) {
             return res.status(validationError.status).json(validationError.json);
+        }
+
+        // Ensure the request body is a JSON object.
+        if (
+            req.body === null ||
+            typeof req.body !== "object" ||
+            Array.isArray(req.body)
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "Request body must be a JSON object"
+            });
         }
 
         const jobId = Number(req.params.id);
         const { title, country, salary } = req.body;
 
-        // Validate title (required, non-empty string)
-        if (!title || typeof title !== 'string' || title.trim() === '') {
+        if (!title || typeof title !== "string" || title.trim() === "") {
             return res.status(400).json({
                 status: "error",
                 message: "Title is required and must be a non-empty string"
             });
         }
 
-        // Validate country (required, non-empty string)
-        if (!country || typeof country !== 'string' || country.trim() === '') {
+        if (!country || typeof country !== "string" || country.trim() === "") {
             return res.status(400).json({
                 status: "error",
                 message: "Country is required and must be a non-empty string"
             });
         }
 
-        // Validate salary (optional, but if provided must be a finite non-negative number, not a string)
         let salaryValue = null;
+
         if (salary !== null && salary !== undefined) {
-            if (typeof salary === 'string') {
+            if (typeof salary === "string") {
                 return res.status(400).json({
                     status: "error",
                     message: "Salary must be a number, not a string"
                 });
             }
 
-            if (typeof salary !== 'number' || !Number.isFinite(salary) || salary < 0) {
+            if (
+                typeof salary !== "number" ||
+                !Number.isFinite(salary) ||
+                salary < 0
+            ) {
                 return res.status(400).json({
                     status: "error",
                     message: "Salary must be null or a finite, non-negative number"
@@ -233,7 +244,6 @@ app.put("/api/jobs/:id", async (req, res, next) => {
             salaryValue = salary;
         }
 
-        // First, check if the job exists
         const [existingRows] = await pool.execute(
             "SELECT id FROM jobs WHERE id = ?",
             [jobId]
@@ -246,13 +256,11 @@ app.put("/api/jobs/:id", async (req, res, next) => {
             });
         }
 
-        // Update the job in the database
         await pool.execute(
             "UPDATE jobs SET title = ?, country = ?, salary = ? WHERE id = ?",
             [title.trim(), country.trim(), salaryValue, jobId]
         );
 
-        // Return success response with the updated job data
         return res.status(200).json({
             status: "success",
             message: "Job updated successfully",
@@ -270,15 +278,14 @@ app.put("/api/jobs/:id", async (req, res, next) => {
 
 app.delete("/api/jobs/:id", async (req, res, next) => {
     try {
-        // Validate ID first
         const validationError = validateJobId(req.params.id);
+
         if (validationError) {
             return res.status(validationError.status).json(validationError.json);
         }
 
         const jobId = Number(req.params.id);
 
-        // First, check if the job exists
         const [existingRows] = await pool.execute(
             "SELECT id FROM jobs WHERE id = ?",
             [jobId]
@@ -291,13 +298,11 @@ app.delete("/api/jobs/:id", async (req, res, next) => {
             });
         }
 
-        // Delete the job from the database
         await pool.execute(
             "DELETE FROM jobs WHERE id = ?",
             [jobId]
         );
 
-        // Return success response
         return res.status(200).json({
             status: "success",
             message: "Job deleted successfully"
@@ -308,11 +313,10 @@ app.delete("/api/jobs/:id", async (req, res, next) => {
 });
 
 /**
- * Centralized error-handling middleware
- * Must have 4 parameters (err, req, res, next) for Express to recognize it as error handler
+ * Centralized error-handling middleware.
  */
 app.use((err, req, res, next) => {
-    // Handle malformed JSON requests
+    // Handle malformed JSON separately.
     if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
         return res.status(400).json({
             status: "error",
@@ -320,16 +324,17 @@ app.use((err, req, res, next) => {
         });
     }
 
-    // Log detailed error information server-side for debugging
     console.error("=== Error Details ===");
     console.error("Message:", err.message);
     console.error("Stack:", err.stack);
     console.error("Request:", req.method, req.url);
     console.error("====================");
 
-    // Send safe, generic error response to client
-    // Never expose stack traces, SQL queries, or database connection details
-    res.status(500).json({
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    return res.status(500).json({
         status: "error",
         message: "An unexpected error occurred"
     });

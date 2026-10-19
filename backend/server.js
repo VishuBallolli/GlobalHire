@@ -1,3 +1,4 @@
+
 require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
 const pool = require("./db");
@@ -46,7 +47,6 @@ app.get("/api/jobs", async function(req, res, next) {
         next(error);
     }
 });
-
 
 app.get("/api/jobs/:id", async (req, res, next) => {
     try {
@@ -124,7 +124,6 @@ app.get("/api/health", function(req, res) {
     });
 });
 
-
 app.post("/api/jobs", async (req, res, next) => {
     try {
         const { title, country, salary } = req.body;
@@ -154,12 +153,14 @@ app.post("/api/jobs", async (req, res, next) => {
                     message: "Salary must be a number, not a string"
                 });
             }
+
             if (typeof salary !== 'number' || !Number.isFinite(salary) || salary < 0) {
                 return res.status(400).json({
                     status: "error",
                     message: "Salary must be null or a finite, non-negative number"
                 });
             }
+
             salaryValue = salary;
         }
 
@@ -221,12 +222,14 @@ app.put("/api/jobs/:id", async (req, res, next) => {
                     message: "Salary must be a number, not a string"
                 });
             }
+
             if (typeof salary !== 'number' || !Number.isFinite(salary) || salary < 0) {
                 return res.status(400).json({
                     status: "error",
                     message: "Salary must be null or a finite, non-negative number"
                 });
             }
+
             salaryValue = salary;
         }
 
@@ -309,6 +312,14 @@ app.delete("/api/jobs/:id", async (req, res, next) => {
  * Must have 4 parameters (err, req, res, next) for Express to recognize it as error handler
  */
 app.use((err, req, res, next) => {
+    // Handle malformed JSON requests
+    if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+        return res.status(400).json({
+            status: "error",
+            message: "Invalid JSON request body"
+        });
+    }
+
     // Log detailed error information server-side for debugging
     console.error("=== Error Details ===");
     console.error("Message:", err.message);

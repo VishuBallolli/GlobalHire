@@ -9,10 +9,11 @@ const PORT = 3000;
 /**
  * Validates that a job ID is a positive integer.
  */
+
 function validateJobId(id) {
     const numId = Number(id);
 
-    if (!Number.isInteger(numId) || numId <= 0 || !Number.isFinite(numId)) {
+    if (!Number.isSafeInteger(numId) || numId <= 0) {
         return {
             status: 400,
             json: {
@@ -24,6 +25,7 @@ function validateJobId(id) {
 
     return null;
 }
+
 
 app.get("/", function(req, res) {
     res.send("Welcome to GlobalHire Backend!");
@@ -41,12 +43,16 @@ app.get("/api/jobs", async function(req, res, next) {
     }
 });
 
+
+
 app.get("/api/jobs/:id", async (req, res, next) => {
     try {
         const validationError = validateJobId(req.params.id);
 
         if (validationError) {
-            return res.status(validationError.status).json(validationError.json);
+            return res
+                .status(validationError.status)
+                .json(validationError.json);
         }
 
         const jobId = Number(req.params.id);
@@ -69,6 +75,8 @@ app.get("/api/jobs/:id", async (req, res, next) => {
     }
 });
 
+
+
 app.get("/api/search", async (req, res, next) => {
     try {
         const title = req.query.title?.trim() || undefined;
@@ -81,7 +89,6 @@ app.get("/api/search", async (req, res, next) => {
         if (title) {
             conditions.push("title LIKE ?");
             params.push(`%${title}%`);
-
         }
 
         if (country) {
@@ -97,11 +104,12 @@ app.get("/api/search", async (req, res, next) => {
 
         const [rows] = await pool.query(sql, params);
 
-        res.status(200).json(rows);
+        return res.status(200).json(rows);
     } catch (error) {
         next(error);
     }
 });
+
 
 app.get("/api/health", function(req, res) {
     res.json({

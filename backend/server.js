@@ -335,6 +335,8 @@ app.use((err, req, res, next) => {
     console.error("=== Error Details ===");
     console.error("Message:", err.message);
     console.error("Stack:", err.stack);
+    console.error("Error code:", err.code);
+    console.error("Underlying errors:", err.errors);
     console.error("Request:", req.method, req.url);
     console.error("====================");
 

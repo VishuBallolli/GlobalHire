@@ -1,6 +1,7 @@
 require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
 const pool = require("./db");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 app.use(express.json({ strict: false }));
@@ -117,6 +118,99 @@ app.get("/api/health", function(req, res) {
         message: "GlobalHire API is running"
     });
 });
+
+
+app.post("/api/auth/register", async (req, res, next) => {
+    try {
+        if (
+            req.body === null ||
+            typeof req.body !== "object" ||
+            Array.isArray(req.body)
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "Request body must be a JSON object"
+            });
+        }
+
+        const { name, email, password } = req.body;
+
+        if (
+            typeof name !== "string" ||
+            name.trim().length < 2 ||
+            name.trim().length > 100
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "Name must be between 2 and 100 characters"
+            });
+        }
+
+        if (
+            typeof email !== "string" ||
+            email.trim().length > 255 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "Please provide a valid email address"
+            });
+        }
+
+        if (
+            typeof password !== "string" ||
+            password.length < 8 ||
+            password.length > 72
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "Password must be between 8 and 72 characters"
+            });
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+
+        const [existingUsers] = await pool.execute(
+            "SELECT id FROM users WHERE email = ?",
+            [normalizedEmail]
+        );
+
+        if (existingUsers.length > 0) {
+            return res.status(409).json({
+                status: "error",
+                message: "An account with this email already exists"
+            });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        const [result] = await pool.execute(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            [name.trim(), normalizedEmail, passwordHash]
+        );
+
+        return res.status(201).json({
+            status: "success",
+            message: "Registration successful",
+            data: {
+                id: result.insertId,
+                name: name.trim(),
+                email: normalizedEmail
+            }
+        });
+    } catch (error) {
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                status: "error",
+                message: "An account with this email already exists"
+            });
+        }
+
+        next(error);
+    }
+});
+
+
 
 app.post("/api/jobs", async (req, res, next) => {
     try {

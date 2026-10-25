@@ -1,11 +1,15 @@
 require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
 const pool = require("./db");
+const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const app = express();
 app.use(express.json({ strict: false }));
+
+app.use(express.static(path.join(__dirname, "../frontend")));
+
 const PORT = 3000;
 
 /**

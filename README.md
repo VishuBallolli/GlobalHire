@@ -188,12 +188,14 @@ Build a responsive, secure, and scalable platform where:
 - Verified the authenticated user's ID, name, and email were returned correctly.
 - Reviewed JWT authentication middleware and restarted the backend for regression testing.
 - Verified that Local Storage and Session Storage were empty after logout.
+- Reviewed the frontend logout handler: it removes the stored token, hides the user profile, and displays a success message.
 
 **Result:** Login, protected profile access, and client-side logout checks passed.
 
 **Security note:** Clearing browser storage removes the locally stored token, but it does not revoke a copied JWT unless server-side token revocation is implemented.
 
 **Next steps:** Review any remaining authentication security checks before marking Day 25 complete.
+
 ## Current Project Status
 
 **Completed and practiced**

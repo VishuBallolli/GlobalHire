@@ -164,9 +164,28 @@ Build a responsive, secure, and scalable platform where:
 - Tested deletion of nonexistent jobs using Postman.
 - Committed the implementation with Git.
 
+
+### Day 24 — JWT Authentication, User Profile, and Logout
+
+- Integrated the frontend login form with the backend login API.
+- Stored the JWT authentication token in `sessionStorage` after successful login.
+- Protected `GET /api/auth/me` using JWT authentication middleware.
+- Retrieved the authenticated user's ID, name, and email from MySQL.
+- Displayed the logged-in user's profile in the frontend.
+- Verified that requests without a token return `401 Unauthorized`.
+- Verified that requests with a valid token return `200 OK` and user details.
+- Implemented frontend logout by removing the stored token and hiding the profile.
+- Tested login, profile retrieval, and logout.
+- Committed and pushed the changes to GitHub.
+
+**Git checkpoint:** `212f679` — `Complete Day 24 JWT profile and logout`
+
+
+
 ## Current Project Status
 
 **Completed and practiced**
+
 - Responsive frontend using HTML, CSS, Bootstrap, and JavaScript.
 - Local Node.js and Express backend.
 - MySQL database setup and connection.
@@ -175,30 +194,38 @@ Build a responsive, secure, and scalable platform where:
 - Basic request validation and error handling.
 - Manual API testing using Postman.
 - Git-based version control and GitHub workflow.
+- User registration and login APIs.
+- JWT-based authentication for protected endpoints.
+- Authenticated user profile retrieval from MySQL.
+- Frontend login, profile display, and logout integration.
 
 **Not yet implemented or planned**
-- Authentication and authorization.
+
 - Job seeker and employer account management.
 - Persistent application tracking and applicant management.
 - Automated unit, integration, and end-to-end tests.
 - Production deployment, Docker, and CI/CD.
-- Advanced security, logging, and monitoring.
+- Role-based authorization, advanced security, logging, and monitoring.
 - Python-based job matching and AI-assisted recommendations.
 
-The current implementation is a learning-stage project. Features will be expanded and tested incrementally as development continues.
+The current implementation is a learning-stage project. Features will be expanded and tested incrementally as development continues..
 
 ## Planned Next Steps
 
-1. Strengthen request validation, error handling, and API security.
+
+## Planned Next Steps
+
+1. Test invalid and expired JWTs, and improve authentication error handling.
 2. Improve job ID validation and handle invalid route parameters.
 3. Add automated tests for backend routes and database operations.
 4. Improve database schema design and learn SQL joins, indexes, and transactions.
-5. Add authentication and role-based authorization.
+5. Implement and test role-based authorization.
 6. Develop job seeker profiles, employer workflows, and application management.
 7. Learn TypeScript and React for a more advanced frontend.
 8. Add Docker, GitHub Actions CI/CD, and cloud deployment.
 9. Explore Python-based matching, AI integration, and recommendation features.
 10. Improve documentation, architecture, accessibility, and performance.
+
 
 ## Repository Structure
 

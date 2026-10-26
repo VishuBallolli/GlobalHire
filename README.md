@@ -178,6 +178,19 @@ Build a responsive, secure, and scalable platform where:
 - Tested login, profile retrieval, and logout.
 - Committed and pushed the changes to GitHub.
 
+### Day 25 — JWT Authentication Regression Testing
+
+**Completed tests**
+- Login endpoint: `POST /api/auth/login` — returned `200 OK` with valid credentials.
+- Protected profile endpoint: `GET /api/auth/me` — returned `200 OK` with a valid Bearer token.
+- Verified the authenticated user's ID, name, and email were returned correctly.
+- Previously tested missing and invalid authentication tokens, which returned `401 Unauthorized`.
+- Reviewed the JWT authentication middleware and restarted the backend for regression testing.
+
+**Result:** Login and authenticated profile access are working correctly.
+
+**Next steps:** Continue authentication security testing, review frontend logout behavior, and verify the complete test results before marking Day 25 complete.
+
 **Git checkpoint:** `212f679` — `Complete Day 24 JWT profile and logout`
 
 

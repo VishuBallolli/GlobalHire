@@ -181,20 +181,19 @@ Build a responsive, secure, and scalable platform where:
 ### Day 25 — JWT Authentication Regression Testing
 
 **Completed tests**
-- Login endpoint: `POST /api/auth/login` — returned `200 OK` with valid credentials.
-- Protected profile endpoint: `GET /api/auth/me` — returned `200 OK` with a valid Bearer token.
+- Login endpoint: `POST /api/auth/login` — `200 OK` with valid credentials.
+- Protected profile endpoint: `GET /api/auth/me` — `200 OK` with a valid Bearer token.
+- Missing or invalid authentication token — `401 Unauthorized`.
+- Profile request without a token after logout — `401 Unauthorized`.
 - Verified the authenticated user's ID, name, and email were returned correctly.
-- Previously tested missing and invalid authentication tokens, which returned `401 Unauthorized`.
-- Reviewed the JWT authentication middleware and restarted the backend for regression testing.
+- Reviewed JWT authentication middleware and restarted the backend for regression testing.
+- Verified that Local Storage and Session Storage were empty after logout.
 
-**Result:** Login and authenticated profile access are working correctly.
+**Result:** Login, protected profile access, and client-side logout checks passed.
 
-**Next steps:** Continue authentication security testing, review frontend logout behavior, and verify the complete test results before marking Day 25 complete.
+**Security note:** Clearing browser storage removes the locally stored token, but it does not revoke a copied JWT unless server-side token revocation is implemented.
 
-**Git checkpoint:** `212f679` — `Complete Day 24 JWT profile and logout`
-
-
-
+**Next steps:** Review any remaining authentication security checks before marking Day 25 complete.
 ## Current Project Status
 
 **Completed and practiced**

@@ -86,16 +86,39 @@ function validateJobId(id) {
 }
 
 
-app.get("/api/auth/me", authenticateToken, (req, res) => {
-    return res.status(200).json({
-        status: "success",
-        message: "Authentication verified",
-        data: {
-            id: req.user.id,
-            email: req.user.email
+app.get("/api/auth/me", authenticateToken, async (req, res) => {
+    try {
+        const [users] = await pool.execute(
+            "SELECT id, name, email FROM users WHERE id = ?",
+            [req.user.id]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                status: "error",
+                message: "User not found"
+            });
         }
-    });
+
+        return res.status(200).json({
+            status: "success",
+            message: "Authentication verified",
+            data: {
+                id: users[0].id,
+                name: users[0].name,
+                email: users[0].email
+            }
+        });
+    } catch (error) {
+        console.error("Profile lookup failed:", error.message);
+
+        return res.status(500).json({
+            status: "error",
+            message: "Unable to load user profile"
+        });
+    }
 });
+
 
 
 

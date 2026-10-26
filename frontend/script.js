@@ -8,25 +8,13 @@ const searchError = document.getElementById("search-error");
 
 // Sample jobs
 const jobs = [
-    {
-        title: "Software Developer",
-        country: "Germany"
-    },
-    {
-        title: "Python Developer",
-        country: "Canada"
-    },
-    {
-        title: "Backend Developer",
-        country: "Japan"
-    },
-    {
-        title: "Frontend Developer",
-        country: "USA"
-    }
+    { title: "Software Developer", country: "Germany" },
+    { title: "Python Developer", country: "Canada" },
+    { title: "Backend Developer", country: "Japan" },
+    { title: "Frontend Developer", country: "USA" }
 ];
 
-// Create and display a job card
+// Create a job card
 function createJobCard(job) {
     const jobCard = document.createElement("div");
     jobCard.classList.add("card", "p-3", "mb-3", "mx-auto");
@@ -43,20 +31,18 @@ function createJobCard(job) {
     return jobCard;
 }
 
-// Display a list of jobs
+// Display jobs
 function displayJobs(jobList) {
     jobsContainer.replaceChildren();
 
     jobList.forEach(function(job) {
-        const jobCard = createJobCard(job);
-        jobsContainer.appendChild(jobCard);
+        jobsContainer.appendChild(createJobCard(job));
     });
 }
 
-// Display all jobs when the page loads
 displayJobs(jobs);
 
-// Handle job search form submission
+// Job search
 jobSearchForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -86,10 +72,46 @@ jobSearchForm.addEventListener("submit", function(event) {
     displayJobs(matchingJobs);
 });
 
-// Login functionality
+// Login elements
 const loginForm = document.getElementById("login-form");
 const loginMessage = document.getElementById("login-message");
 
+// Load the authenticated user's profile
+async function loadUserProfile() {
+    const token = sessionStorage.getItem("globalhire_token");
+
+    if (!token) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/auth/me", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || "Unable to load profile.");
+        }
+
+        const user = result.data.user || result.data;
+
+        document.getElementById("user-name").textContent =
+            `Name: ${user.name || "User"}`;
+
+        document.getElementById("user-email").textContent =
+            `Email: ${user.email}`;
+
+        document.getElementById("user-profile").hidden = false;
+    } catch (error) {
+        console.error("Profile loading failed:", error.message);
+    }
+}
+
+// Login
 loginForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -120,6 +142,8 @@ loginForm.addEventListener("submit", async function(event) {
 
         sessionStorage.setItem("globalhire_token", result.data.token);
 
+        await loadUserProfile();
+
         loginMessage.textContent = "Login successful!";
         loginMessage.className = "mt-3 text-success";
     } catch (error) {
@@ -128,7 +152,19 @@ loginForm.addEventListener("submit", async function(event) {
     }
 });
 
+// Logout
+const logoutButton = document.getElementById("logout-button");
 
+logoutButton.addEventListener("click", function() {
+    sessionStorage.removeItem("globalhire_token");
+
+    document.getElementById("user-profile").hidden = true;
+
+    loginMessage.textContent = "You have logged out successfully.";
+    loginMessage.className = "mt-3 text-success";
+});
+
+// Registration
 const registerForm = document.getElementById("register-form");
 const registerMessage = document.getElementById("register-message");
 

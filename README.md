@@ -196,6 +196,22 @@ Build a responsive, secure, and scalable platform where:
 
 **Next steps:** Review any remaining authentication security checks before marking Day 25 complete.
 
+
+ 
+
+## Day 27 — Backend Request Validation and Error Handling
+
+- Tested job creation validation for missing, empty, and whitespace-only title and country fields.
+- Verified salary validation for string, negative, zero, and null values.
+- Tested invalid request bodies, including arrays and malformed JSON.
+- Verified valid job creation returns `201 Created`.
+- Verified retrieving an existing job returns `200 OK`.
+- Verified invalid job IDs return `400 Bad Request` and nonexistent IDs return `404 Not Found`.
+- Confirmed title and country values are trimmed before saving.
+- Tested API requests using Postman.
+
+
+
 ## Current Project Status
 
 **Completed and practiced**

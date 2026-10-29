@@ -41,6 +41,17 @@ def calculate_match(job_skills, candidate_skills):
 
     return matching_skills, score
 
+def get_candidate_match(job, candidate):
+    matching_skills, score = calculate_match(
+        job["skills"],
+        candidate["skills"]
+    )
+
+    return {
+        "name": candidate["name"],
+        "matching_skills": matching_skills,
+        "match_score": round(score, 2)
+    }
 
 
 if __name__ == "__main__":

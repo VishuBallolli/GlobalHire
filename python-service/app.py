@@ -1,8 +1,11 @@
 
+from fastapi import FastAPI
+
+app = FastAPI(title="GlobalHire Python Matching API")
+
+@app.get("/")
 def home():
     return {"message": "GlobalHire Python Service is running"}
-
-
 job = {
     "title": "Backend Developer",
     "skills": ["Python", "SQL", "REST API"]
@@ -53,6 +56,24 @@ def get_candidate_match(job, candidate):
         "match_score": round(score, 2)
     }
 
+@app.get("/candidates")
+def get_candidates():
+    candidates = [candidate, candidate2, candidate3]
+
+    results = []
+
+    for person in candidates:
+        results.append(get_candidate_match(job, person))
+
+    results.sort(
+        key=lambda person: person["match_score"],
+        reverse=True
+    )
+
+    return {
+        "job_title": job["title"],
+        "candidates": results
+    }
 
 if __name__ == "__main__":
     print(home())

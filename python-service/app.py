@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from routers.candidates import router as candidates_router
+from routers.jobs import router as jobs_router
 
 app = FastAPI(title="GlobalHire Python Matching API")
 
@@ -10,3 +11,4 @@ def home():
 
 
 app.include_router(candidates_router)
+app.include_router(jobs_router)

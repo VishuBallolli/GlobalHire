@@ -24,3 +24,19 @@ def get_all_jobs():
     connection.close()
 
     return jobs
+
+def get_job_by_id(job_id):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM jobs WHERE id = %s",
+        (job_id,)
+    )
+
+    job = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return job

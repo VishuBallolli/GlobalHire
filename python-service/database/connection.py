@@ -1,3 +1,4 @@
+
 import mysql.connector
 
 
@@ -12,6 +13,7 @@ def get_db_connection():
     return connection
 
 
+# Get all jobs
 def get_all_jobs():
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
@@ -25,6 +27,8 @@ def get_all_jobs():
 
     return jobs
 
+
+# Get job by ID
 def get_job_by_id(job_id):
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
@@ -40,3 +44,21 @@ def get_job_by_id(job_id):
     connection.close()
 
     return job
+
+
+# Search jobs by title
+def search_jobs(title):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM jobs WHERE title LIKE %s",
+        (f"%{title}%",)
+    )
+
+    jobs = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return jobs

@@ -139,6 +139,59 @@ app.get("/api/jobs", async function(req, res, next) {
 });
 
 
+app.get("/api/jobs/recommendations", authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+    const internalApiKey = process.env.GLOBALHIRE_INTERNAL_API_KEY;
+
+    if (!internalApiKey) {
+        return res.status(500).json({
+            status: "error",
+            message: "Recommendation service is not configured"
+        });
+    }
+
+    const pythonUrl = `http://127.0.0.1:8000/candidates/${encodeURIComponent(userId)}/job-matches`;
+
+    try {
+        const response = await fetch(pythonUrl, {
+            method: "GET",
+            headers: {
+                "X-Internal-API-Key": internalApiKey
+            },
+            signal: AbortSignal.timeout(10000)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return res.status(response.status).json(data);
+        }
+
+        if (response.status === 404) {
+            return res.status(404).json({
+                status: "error",
+                message: "Candidate profile not found"
+            });
+        }
+
+        return res.status(502).json({
+            status: "error",
+            message: "Unable to retrieve job recommendations"
+        });
+    } catch (error) {
+        if (error && error.name === "TimeoutError") {
+            return res.status(504).json({
+                status: "error",
+                message: "Job recommendation service timed out"
+            });
+        }
+
+        return res.status(502).json({
+            status: "error",
+            message: "Unable to retrieve job recommendations"
+        });
+    }
+});
+
 
 app.get("/api/jobs/:id", async (req, res, next) => {
     try {

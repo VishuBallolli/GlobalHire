@@ -319,3 +319,21 @@ The longer-term goal is to develop strong full-stack engineering skills, includi
 ## Repository
 
 GitHub: [VishuBallolli/GlobalHire](https://github.com/VishuBallolli/GlobalHire)
+
+## Development Progress
+
+### Day 37 – Database Recovery Investigation
+
+- Investigated MariaDB InnoDB table errors affecting the GlobalHire database.
+- Created a separate safety backup of the MySQL data directory.
+- Created an isolated recovery copy without modifying the original database.
+- Configured a separate MariaDB recovery instance on port `3307`.
+- Successfully started the recovery server using MariaDB `10.4.32`.
+- Confirmed that `globalhire_db` is visible on the recovery instance.
+- Database table recovery and application testing are still in progress.
+
+**Next Steps:**
+- Verify the five GlobalHire database tables.
+- Investigate and recover the missing InnoDB table registrations if possible.
+- Re-run Python service tests.
+- Verify Node.js backend API endpoints.

@@ -7,11 +7,10 @@ def get_db_connection():
         host="localhost",
         user="root",
         password="",
-        database="globalhire_db"
+        database="globalhire_db_recovered"
     )
 
     return connection
-
 
 # Get all jobs
 def get_all_jobs():

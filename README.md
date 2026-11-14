@@ -92,7 +92,6 @@ GlobalHire/
 │
 ├── python-service/
 │   ├── app.py
-│   ├── app_backup.py
 │   └── tests/
 │
 ├── database/
@@ -116,6 +115,9 @@ This project is being developed incrementally through daily learning and impleme
 - **Day 1–15:** Initial project setup and foundational development.
 - **Day 24–27:** Continued backend and database development.
 - **Day 36:** Python job-matching functionality and API tests.
+- **Day 37:** Database recovery investigation.
+- **Day 38:** Database recovery validation and backend integration.
+- **Day 39:** Node.js backend learning and API verification.
 
 ### Day 36 – Python Matching and API Tests
 
@@ -148,25 +150,70 @@ doesn't exist in engine
 - Created a safety backup of the original MySQL data directory.
 - Created a separate recovery working copy.
 - Verified important InnoDB file hashes between the backup and recovery copy.
-- Created a separate MariaDB recovery configuration.
-- Started an isolated recovery server on port `3307`.
-- Successfully connected to the recovery server.
-- Confirmed that `globalhire_db` was visible on the recovery instance.
+- Created separate MariaDB recovery configurations.
+- Started isolated recovery environments.
+- Investigated missing InnoDB table registrations.
+- Worked toward recovering the affected database tables.
 
-**Current status:**
+### Day 38 – Database Recovery and Backend Integration
 
-Database recovery and application testing are still in progress.
+Successfully recovered and validated the GlobalHire database in a separate database environment.
 
-No claim is made that the original database has been fully recovered.
+**Database recovery and validation:**
 
-**Next tasks:**
+- Recovered all five affected database tables.
+- Exported the recovered SQL data.
+- Imported the recovered data into an isolated validation database.
+- Verified 47 recovered records.
+- Checked primary keys and unique indexes.
+- Verified three foreign key relationships with `ON DELETE CASCADE`.
+- Performed cascade deletion tests inside transactions and rolled them back.
+- Created a separate recovered database named `globalhire_db_recovered`.
+- Imported and verified the recovered SQL data in the new database.
+- Confirmed that the original damaged `globalhire_db` database remained untouched.
+- Verified that the recovered database had five accessible InnoDB tables.
+- Checked foreign key relationships and orphan records.
 
-- Verify all five GlobalHire database tables.
-- Investigate missing InnoDB table registrations.
-- Verify table accessibility and data integrity.
-- Rerun Python service tests.
-- Verify Node.js backend API endpoints.
-- Confirm that the application can communicate with MySQL correctly.
+**Backend integration:**
+
+- Updated the Node.js backend database configuration.
+- Updated the Python service database connection.
+- Configured application environment variables and rotated internal API keys.
+- Configured the JWT secret.
+- Verified Node.js registration and login functionality.
+- Tested duplicate registration handling with HTTP 409.
+- Verified protected authentication using JWT.
+- Confirmed Python database connectivity.
+- Ran Python automated tests: **11 passed**.
+
+**GitHub update:**
+
+Latest Day 38 implementation commit:
+
+`d8634a5` – Fix Python database connection after recovery
+
+Successfully pushed the commit to the GitHub `main` branch.
+
+### Day 39 – Node.js Backend Learning and API Verification
+
+Focused on understanding the existing Node.js and Express backend and verifying application functionality.
+
+**Backend concepts studied:**
+
+- Reviewed the Node.js backend project structure.
+- Studied Express middleware and request handling.
+- Understood the purpose of `next()` in Express middleware.
+- Learned how MySQL connection pooling works using `mysql2/promise`.
+- Reviewed centralized error-handling middleware.
+- Practiced understanding HTTP status codes such as 200, 201, 400, 401, 404, 409, and 500.
+
+**Backend verification:**
+
+- Started the Node.js backend successfully.
+- Verified that the server was running at `http://localhost:3000`.
+- Tested the `GET /api/jobs` endpoint.
+- Successfully retrieved **7 job records** from the recovered database.
+- Confirmed that the Node.js backend could communicate with MySQL.
 
 ---
 
@@ -356,7 +403,7 @@ The long-term learning plan also includes:
 
 **Project:** GlobalHire
 
-**Current milestone:** Day 37 – Database Recovery Investigation
+**Current milestone:** Day 39 – Node.js Backend Learning and API Verification
 
 **Backend:** Node.js and Express
 
@@ -366,7 +413,11 @@ The long-term learning plan also includes:
 
 **Version control:** Git and GitHub
 
-**Current priority:** Complete database recovery investigation and verify application functionality.
+**Latest verified backend result:** Successfully retrieved 7 job records through the `/api/jobs` endpoint.
+
+**Latest implementation commit:** `d8634a5`
+
+**Current priority:** Continue backend development, testing, and application improvements.
 
 ---
 

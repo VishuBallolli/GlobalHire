@@ -403,7 +403,9 @@ The long-term learning plan also includes:
 
 **Project:** GlobalHire
 
-**Current milestone:** Day 39 – Node.js Backend Learning and API Verification
+**Current milestone:** Day 40 – REST API and CRUD Fundamentals
+
+**Latest verified backend result:** Successfully retrieved 8 job records through the `/api/jobs` endpoint.
 
 **Backend:** Node.js and Express
 
@@ -428,3 +430,41 @@ GlobalHire is being developed as a practical learning project.
 The goal is not simply to finish a project, but to understand how real-world software applications are designed, developed, tested, debugged, deployed, and maintained.
 
 New technologies and advanced features will be introduced progressively as the foundational concepts become stronger.
+---
+
+## Day 40 - REST API and CRUD Fundamentals
+
+### Topics Learned
+- REST API fundamentals.
+- HTTP methods: GET, POST, PUT, DELETE.
+- CRUD operations: Create, Read, Update, Delete.
+- Express routes and MySQL responsibilities.
+- Request body validation.
+- HTTP status codes, including 201 Created and 400 Bad Request.
+- Parameterized SQL queries.
+
+### Practical Implementation and Testing
+- Inspected the existing Express POST `/api/jobs` route.
+- Understood salary validation and JSON request validation.
+- Verified the Node.js backend health endpoint.
+- Successfully created a Python Developer job using POST `/api/jobs`.
+- Retrieved all jobs using GET `/api/jobs`.
+- Retrieved the newly created job using GET `/api/jobs/10`.
+- Verified the saved record in phpMyAdmin.
+
+### Verified New Job Record
+
+| Field | Value |
+|---|---|
+| Job ID | 10 |
+| Title | Python Developer |
+| Country | India |
+| Salary | 60000 |
+
+### Database Verification
+- Database: `globalhire_db_recovered`
+- Table: `jobs`
+- New record successfully verified.
+
+### Learning Outcome
+Practiced the complete job-creation flow from an HTTP POST request through Express validation and MySQL insertion, followed by API and database verification.

@@ -403,7 +403,7 @@ The long-term learning plan also includes:
 
 **Project:** GlobalHire
 
-**Current milestone:** Day 40 – REST API and CRUD Fundamentals
+**Current milestone:** Day 41 – PUT and DELETE API Testing
 
 **Latest verified backend result:** Successfully retrieved 8 job records through the `/api/jobs` endpoint.
 
@@ -468,3 +468,42 @@ New technologies and advanced features will be introduced progressively as the f
 
 ### Learning Outcome
 Practiced the complete job-creation flow from an HTTP POST request through Express validation and MySQL insertion, followed by API and database verification.
+
+
+---
+
+## Day 41 - PUT and DELETE API Testing
+
+### Topics Learned
+- PUT and DELETE HTTP methods.
+- Updating existing database records.
+- Deleting database records.
+- HTTP status codes: 200 OK and 404 Not Found.
+- API testing using PowerShell.
+- Verifying database changes through GET requests.
+
+### Practical Implementation and Testing
+- Inspected the existing Express PUT `/api/jobs/:id` route.
+- Inspected the existing Express DELETE `/api/jobs/:id` route.
+- Started the Node.js backend.
+- Successfully updated Job ID 10 using PUT.
+- Changed the Python Developer salary from 60000 to 75000.
+- Verified the updated record using GET.
+- Successfully deleted Job ID 10 using DELETE.
+- Verified that GET returned 404 Job Not Found after deletion.
+
+### Verified Results
+| Operation | Result |
+|---|---|
+| PUT /api/jobs/10 | Successful |
+| GET /api/jobs/10 | Updated record verified |
+| DELETE /api/jobs/10 | Successful |
+| GET /api/jobs/10 after deletion | 404 Not Found |
+
+### Learning Outcome
+Practiced updating and deleting database records through Express REST APIs and verified the results using HTTP requests.
+
+### Next Steps
+- Improve API testing.
+- Test invalid inputs and error responses.
+- Continue backend development.

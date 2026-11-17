@@ -507,3 +507,46 @@ Practiced updating and deleting database records through Express REST APIs and v
 - Improve API testing.
 - Test invalid inputs and error responses.
 - Continue backend development.
+
+---
+
+## Day 42 - API Validation and Error Handling
+
+### Topics Learned
+- API input validation.
+- Validating positive integer IDs.
+- HTTP status codes: 400 Bad Request, 404 Not Found, and 500 Internal Server Error.
+- Centralized Express error-handling middleware.
+- Handling malformed JSON requests.
+- Database connection testing.
+
+### Practical Implementation and Testing
+- Inspected the `validateJobId()` function.
+- Reviewed POST and PUT job validation.
+- Reviewed centralized Express error-handling middleware.
+- Started the Node.js backend and verified the health endpoint.
+- Tested invalid job titles.
+- Tested negative and string salary values.
+- Tested invalid and zero job IDs.
+- Tested a valid but non-existing job ID.
+- Tested malformed JSON request bodies.
+- Verified the MySQL database connection using `test-db.js`.
+
+### Verified Results
+| Test | Expected Result |
+|---|---|
+| Empty job title | 400 Bad Request |
+| Negative salary | 400 Bad Request |
+| String salary | 400 Bad Request |
+| Invalid job ID | 400 Bad Request |
+| Job ID 999999 | 404 Not Found |
+| Malformed JSON | 400 Bad Request |
+| Database connection | Successful |
+| Health endpoint | Successful |
+
+### Learning Outcome
+Learned how to validate API inputs, handle invalid requests, return appropriate HTTP status codes, manage unexpected errors, and verify backend database connectivity.
+
+### Next Steps
+- Set up automated backend API tests.
+- Continue improving backend reliability.

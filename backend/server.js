@@ -692,6 +692,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, function() {
-    console.log(`GlobalHire server running at http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, function() {
+        console.log(`GlobalHire server running at http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
+

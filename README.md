@@ -550,3 +550,45 @@ Learned how to validate API inputs, handle invalid requests, return appropriate 
 ### Next Steps
 - Set up automated backend API tests.
 - Continue improving backend reliability.
+---
+
+## Day 43 - Automated Backend API Testing
+
+### Topics Learned
+- Automated testing with Node.js built-in test runner.
+- HTTP endpoint testing using Supertest.
+- Testing API response status codes and JSON responses.
+- Testing successful and unsuccessful API requests.
+- Managing MySQL connection pool cleanup during automated tests.
+
+### Practical Implementation and Testing
+- Installed Supertest as a development dependency.
+- Exported the Express application for automated testing.
+- Created `backend/tests/api.test.js`.
+- Tested the GET /api/health endpoint.
+- Tested the GET /api/jobs endpoint.
+- Tested retrieving a job using GET /api/jobs/:id.
+- Tested invalid job IDs and verified HTTP 400 responses.
+- Tested non-existing job IDs and verified HTTP 404 responses.
+- Added MySQL connection pool cleanup after API tests.
+- Executed the complete backend test suite using `npm.cmd test`.
+
+### Verified Results
+| Test | Result |
+|---|---|
+| MySQL database connection | Passed |
+| GET /api/health | Passed |
+| GET /api/jobs | Passed |
+| GET /api/jobs/1 | Passed |
+| Invalid job ID | 400 Bad Request |
+| Non-existing job ID | 404 Not Found |
+| Total automated tests | 6 Passed, 0 Failed |
+
+### Learning Outcome
+Learned how to write and execute automated backend tests, verify REST API responses, test validation and error handling, and manage database connections during testing.
+
+### Next Steps
+- Expand automated API test coverage.
+- Test search and authentication endpoints.
+- Continue improving backend reliability.
+

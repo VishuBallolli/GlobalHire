@@ -57,6 +57,15 @@ test("GET /api/jobs/:id should return 404 for a missing job", async () => {
     assert.equal(response.body.message, "Job not found");
 });
 
+// Test 6: Search all jobs without filters
+test("GET /api/search should return all jobs", async () => {
+    const response = await request(app).get("/api/search");
+
+    assert.equal(response.status, 200);
+    assert.ok(Array.isArray(response.body));
+});
+
+
 // Close MySQL connection pool after tests
 after(async () => {
     await pool.end();

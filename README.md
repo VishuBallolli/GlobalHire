@@ -592,3 +592,32 @@ Learned how to write and execute automated backend tests, verify REST API respon
 - Test search and authentication endpoints.
 - Continue improving backend reliability.
 
+## Day 44 – Search API Testing
+
+### Completed Tasks
+- Reviewed the existing GET /api/search endpoint.
+- Understood title and country search filters.
+- Added an automated test for GET /api/search.
+- Verified that the search endpoint returns a list of jobs.
+- Started MySQL and verified the database connection.
+- Executed the complete backend test suite using `npm.cmd test`.
+
+### Verified Results
+| Test | Result |
+|---|---|
+| MySQL database connection | Passed |
+| GET /api/health | Passed |
+| GET /api/jobs | Passed |
+| GET /api/jobs/1 | Passed |
+| Invalid job ID | 400 Bad Request |
+| Non-existing job ID | 404 Not Found |
+| GET /api/search | Passed |
+| Total automated tests | 7 Passed, 0 Failed |
+
+### Learning Outcome
+Learned how to test search API functionality using automated tests, understand database-dependent API failures, and verify successful MySQL connectivity.
+
+### Next Steps
+- Expand search API test coverage.
+- Test authentication endpoints.
+- Continue improving backend reliability.

@@ -621,3 +621,41 @@ Learned how to test search API functionality using automated tests, understand d
 - Expand search API test coverage.
 - Test authentication endpoints.
 - Continue improving backend reliability.
+
+## Day 45 - Authentication API Testing
+
+### Completed Tasks
+- Reviewed the JWT authentication middleware.
+- Understood Bearer token validation.
+- Tested the protected GET /api/auth/me endpoint.
+- Verified that requests without authentication tokens return HTTP 401.
+- Verified that invalid JWT tokens return HTTP 401.
+- Tested login email validation.
+- Tested empty password validation.
+- Used Supertest and the Node.js built-in test runner.
+- Verified successful MySQL connectivity.
+
+### Verified Results
+| Test | Result |
+|---|---|
+| MySQL database connection | Passed |
+| GET /api/health | Passed |
+| GET /api/jobs | Passed |
+| GET /api/jobs/1 | Passed |
+| Invalid job ID | 400 Bad Request |
+| Missing job | 404 Not Found |
+| GET /api/search | Passed |
+| Missing authentication token | 401 Unauthorized |
+| Invalid authentication token | 401 Unauthorized |
+| Invalid login email | 400 Bad Request |
+| Empty login password | 400 Bad Request |
+| Total automated tests | 11 Passed, 0 Failed |
+
+### Learning Outcome
+Learned how JWT authentication middleware protects API endpoints, how Bearer tokens are validated, and how to test authentication failures and login input validation using automated API tests.
+
+### Next Steps
+- Test successful login.
+- Verify JWT-based profile access.
+- Expand authentication test coverage.
+- Continue improving backend security.

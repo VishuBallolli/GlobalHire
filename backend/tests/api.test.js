@@ -65,6 +65,67 @@ test("GET /api/search should return all jobs", async () => {
     assert.ok(Array.isArray(response.body));
 });
 
+// Test 7: Reject profile request without an authentication token
+test("GET /api/auth/me should reject requests without a token", async () => {
+    const response = await request(app).get("/api/auth/me");
+
+    assert.equal(response.status, 401);
+    assert.equal(response.body.status, "error");
+    assert.equal(
+        response.body.message,
+        "Authentication token required"
+    );
+});
+
+// Test 8: Reject an invalid authentication token
+test("GET /api/auth/me should reject an invalid token", async () => {
+    const response = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", "Bearer invalid-token");
+
+    assert.equal(response.status, 401);
+    assert.equal(response.body.status, "error");
+    assert.equal(
+        response.body.message,
+        "Invalid or expired authentication token"
+    );
+});
+
+
+// Test 9: Reject login with an invalid email
+test("POST /api/auth/login should reject an invalid email", async () => {
+    const response = await request(app)
+        .post("/api/auth/login")
+        .send({
+            email: "invalid-email",
+            password: "Password123"
+        });
+
+    assert.equal(response.status, 400);
+    assert.equal(response.body.status, "error");
+    assert.equal(
+        response.body.message,
+        "Please provide a valid email address"
+    );
+});
+
+
+// Test 10: Reject login with an empty password
+test("POST /api/auth/login should reject an empty password", async () => {
+    const response = await request(app)
+        .post("/api/auth/login")
+        .send({
+            email: "test@example.com",
+            password: ""
+        });
+
+    assert.equal(response.status, 400);
+    assert.equal(response.body.status, "error");
+    assert.equal(
+        response.body.message,
+        "Please provide a valid password"
+    );
+});
 
 // Close MySQL connection pool after tests
 after(async () => {

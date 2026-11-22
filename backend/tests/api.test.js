@@ -1,10 +1,33 @@
 
-const { test, after } = require("node:test");
+const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const request = require("supertest");
 
 const app = require("../server");
 const pool = require("../db");
+
+// Day 46: Temporary authentication test user
+const testUser = {
+    name: "GlobalHire Day46 Tester",
+    email: "globalhire.day46.test@example.com",
+    password: "Day46TestPassword123"
+};
+
+let testUserId;
+let authToken;
+
+// Day 46: Create a temporary user before authentication tests
+before(async () => {
+    const response = await request(app)
+        .post("/api/auth/register")
+        .send(testUser);
+
+    assert.equal(response.status, 201);
+    assert.equal(response.body.status, "success");
+
+    testUserId = response.body.data.id;
+});
+
 
 // Test 1: Health API
 test("GET /api/health should return success", async () => {
@@ -127,7 +150,57 @@ test("POST /api/auth/login should reject an empty password", async () => {
     );
 });
 
-// Close MySQL connection pool after tests
+
+// Test 11: Successful login should return a JWT token
+test("POST /api/auth/login should successfully log in a user", async () => {
+    const response = await request(app)
+        .post("/api/auth/login")
+        .send({
+            email: testUser.email,
+            password: testUser.password
+        });
+
+    assert.equal(response.status, 200);
+    assert.equal(response.body.status, "success");
+    assert.equal(response.body.message, "Login successful");
+
+    assert.ok(response.body.data.token);
+    assert.equal(response.body.data.tokenType, "Bearer");
+    assert.equal(response.body.data.expiresIn, 3600);
+
+    assert.equal(response.body.data.user.id, testUserId);
+    assert.equal(response.body.data.user.name, testUser.name);
+    assert.equal(response.body.data.user.email, testUser.email);
+
+    authToken = response.body.data.token;
+});
+
+
+// Test 12: Access user profile using a valid JWT token
+test("GET /api/auth/me should return the authenticated user profile", async () => {
+    const response = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${authToken}`);
+
+    assert.equal(response.status, 200);
+    assert.equal(response.body.status, "success");
+    assert.equal(response.body.message, "Authentication verified");
+
+    assert.equal(response.body.data.id, testUserId);
+    assert.equal(response.body.data.name, testUser.name);
+    assert.equal(response.body.data.email, testUser.email);
+});
+
+// Day 46: Clean up temporary test user and close database pool
 after(async () => {
-    await pool.end();
+    try {
+        if (testUserId) {
+            await pool.execute(
+                "DELETE FROM users WHERE id = ? AND email = ?",
+                [testUserId, testUser.email]
+            );
+        }
+    } finally {
+        await pool.end();
+    }
 });

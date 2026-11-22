@@ -659,3 +659,23 @@ Learned how JWT authentication middleware protects API endpoints, how Bearer tok
 - Verify JWT-based profile access.
 - Expand authentication test coverage.
 - Continue improving backend security.
+
+## Day 46 – Successful Login and JWT Profile Access Testing
+
+### Completed
+- Added automated tests for successful user login.
+- Verified JWT token generation and response structure.
+- Verified Bearer token authentication.
+- Tested protected user profile access using a valid JWT.
+- Created a temporary test user through the registration API.
+- Added automatic cleanup of the temporary test user.
+
+### Test Results
+- Total tests: 13
+- Passed: 13
+- Failed: 0
+
+### Key Learning
+Successfully tested the complete authentication flow: registration → login → JWT generation → protected profile access.
+
+**Status: Completed**

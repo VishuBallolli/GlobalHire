@@ -2,21 +2,21 @@
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const request = require("supertest");
-
+const jwt = require("jsonwebtoken");
 const app = require("../server");
 const pool = require("../db");
 
-// Day 46: Temporary authentication test user
+// Day 47: Temporary authentication test user
 const testUser = {
-    name: "GlobalHire Day46 Tester",
-    email: "globalhire.day46.test@example.com",
-    password: "Day46TestPassword123"
+    name: "GlobalHire Day47 Tester",
+    email: "globalhire.day47.test@example.com",
+    password: "Day47TestPassword123"
 };
 
 let testUserId;
 let authToken;
 
-// Day 46: Create a temporary user before authentication tests
+// Create a temporary user before authentication tests
 before(async () => {
     const response = await request(app)
         .post("/api/auth/register")
@@ -27,7 +27,6 @@ before(async () => {
 
     testUserId = response.body.data.id;
 });
-
 
 // Test 1: Health API
 test("GET /api/health should return success", async () => {
@@ -48,7 +47,6 @@ test("GET /api/jobs should return a list of jobs", async () => {
     assert.equal(response.status, 200);
     assert.ok(Array.isArray(response.body));
 });
-
 
 // Test 3: Get a job using a valid ID
 test("GET /api/jobs/:id should return a job", async () => {
@@ -88,7 +86,7 @@ test("GET /api/search should return all jobs", async () => {
     assert.ok(Array.isArray(response.body));
 });
 
-// Test 7: Reject profile request without an authentication token
+// Test 7: Reject request without authentication token
 test("GET /api/auth/me should reject requests without a token", async () => {
     const response = await request(app).get("/api/auth/me");
 
@@ -114,8 +112,63 @@ test("GET /api/auth/me should reject an invalid token", async () => {
     );
 });
 
+// Test 9: Reject an expired authentication token
+test("GET /api/auth/me should reject an expired token", async () => {
+    const expiredToken = jwt.sign(
+        { email: testUser.email },
+        process.env.JWT_SECRET,
+        {
+            subject: String(testUserId),
+            expiresIn: -1,
+            issuer: "globalhire",
+            audience: "globalhire-users"
+        }
+    );
 
-// Test 9: Reject login with an invalid email
+    const response = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", "Bearer " + expiredToken);
+
+    assert.equal(response.status, 401);
+    assert.equal(response.body.status, "error");
+    assert.equal(
+        response.body.message,
+        "Invalid or expired authentication token"
+    );
+});
+
+// Test 10: Reject a tampered authentication token
+test("GET /api/auth/me should reject a tampered token", async () => {
+    const validToken = jwt.sign(
+        { email: testUser.email },
+        process.env.JWT_SECRET,
+        {
+            subject: String(testUserId),
+            expiresIn: "1h",
+            issuer: "globalhire",
+            audience: "globalhire-users"
+        }
+    );
+const tokenParts = validToken.split(".");
+
+tokenParts[2] =
+    (tokenParts[2][0] === "a" ? "b" : "a") +
+    tokenParts[2].slice(1);
+
+const tamperedToken = tokenParts.join(".");
+    const response = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", "Bearer " + tamperedToken);
+
+    assert.equal(response.status, 401);
+    assert.equal(response.body.status, "error");
+    assert.equal(
+        response.body.message,
+        "Invalid or expired authentication token"
+    );
+});
+
+// Test 11: Reject login with an invalid email
 test("POST /api/auth/login should reject an invalid email", async () => {
     const response = await request(app)
         .post("/api/auth/login")
@@ -132,8 +185,7 @@ test("POST /api/auth/login should reject an invalid email", async () => {
     );
 });
 
-
-// Test 10: Reject login with an empty password
+// Test 12: Reject login with an empty password
 test("POST /api/auth/login should reject an empty password", async () => {
     const response = await request(app)
         .post("/api/auth/login")
@@ -150,8 +202,7 @@ test("POST /api/auth/login should reject an empty password", async () => {
     );
 });
 
-
-// Test 11: Successful login should return a JWT token
+// Test 13: Successful login should return a JWT token
 test("POST /api/auth/login should successfully log in a user", async () => {
     const response = await request(app)
         .post("/api/auth/login")
@@ -175,12 +226,11 @@ test("POST /api/auth/login should successfully log in a user", async () => {
     authToken = response.body.data.token;
 });
 
-
-// Test 12: Access user profile using a valid JWT token
+// Test 14: Access profile using a valid JWT token
 test("GET /api/auth/me should return the authenticated user profile", async () => {
     const response = await request(app)
         .get("/api/auth/me")
-        .set("Authorization", `Bearer ${authToken}`);
+        .set("Authorization", "Bearer " + authToken);
 
     assert.equal(response.status, 200);
     assert.equal(response.body.status, "success");
@@ -191,7 +241,7 @@ test("GET /api/auth/me should return the authenticated user profile", async () =
     assert.equal(response.body.data.email, testUser.email);
 });
 
-// Day 46: Clean up temporary test user and close database pool
+// Clean up temporary test user and close database pool
 after(async () => {
     try {
         if (testUserId) {

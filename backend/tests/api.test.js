@@ -6,15 +6,17 @@ const jwt = require("jsonwebtoken");
 const app = require("../server");
 const pool = require("../db");
 
-// Day 47: Temporary authentication test user
+// Day 48: Temporary authentication test user
 const testUser = {
-    name: "GlobalHire Day47 Tester",
-    email: "globalhire.day47.test@example.com",
-    password: "Day47TestPassword123"
+    name: "GlobalHire Day48 Tester",
+    email: "globalhire.day48.test@example.com",
+    password: "Day48TestPassword123",
+    role: "admin"
 };
 
 let testUserId;
 let authToken;
+let testJobId;
 
 // Create a temporary user before authentication tests
 before(async () => {
@@ -26,6 +28,14 @@ before(async () => {
     assert.equal(response.body.status, "success");
 
     testUserId = response.body.data.id;
+
+    // Verify public registration cannot assign admin role
+    const [users] = await pool.execute(
+        "SELECT role FROM users WHERE id = ?",
+        [testUserId]
+    );
+
+    assert.equal(users[0].role, "user");
 });
 
 // Test 1: Health API
@@ -34,10 +44,7 @@ test("GET /api/health should return success", async () => {
 
     assert.equal(response.status, 200);
     assert.equal(response.body.status, "success");
-    assert.equal(
-        response.body.message,
-        "GlobalHire API is running"
-    );
+    assert.equal(response.body.message, "GlobalHire API is running");
 });
 
 // Test 2: Get all jobs
@@ -149,13 +156,15 @@ test("GET /api/auth/me should reject a tampered token", async () => {
             audience: "globalhire-users"
         }
     );
-const tokenParts = validToken.split(".");
 
-tokenParts[2] =
-    (tokenParts[2][0] === "a" ? "b" : "a") +
-    tokenParts[2].slice(1);
+    const tokenParts = validToken.split(".");
 
-const tamperedToken = tokenParts.join(".");
+    tokenParts[2] =
+        (tokenParts[2][0] === "a" ? "b" : "a") +
+        tokenParts[2].slice(1);
+
+    const tamperedToken = tokenParts.join(".");
+
     const response = await request(app)
         .get("/api/auth/me")
         .set("Authorization", "Bearer " + tamperedToken);
@@ -241,10 +250,85 @@ test("GET /api/auth/me should return the authenticated user profile", async () =
     assert.equal(response.body.data.email, testUser.email);
 });
 
-// Clean up temporary test user and close database pool
+// Test 15: Reject job creation without an authentication token
+test("POST /api/jobs should reject requests without a token", async () => {
+    const response = await request(app)
+        .post("/api/jobs")
+        .send({});
+
+    assert.equal(response.status, 401);
+    assert.equal(
+        response.body.message,
+        "Authentication token required"
+    );
+});
+
+// Test 16: Reject job creation by a normal user
+test("POST /api/jobs should reject normal users", async () => {
+    const response = await request(app)
+        .post("/api/jobs")
+        .set("Authorization", `Bearer ${authToken}`)
+        .send({});
+
+    assert.equal(response.status, 403);
+    assert.equal(
+        response.body.message,
+        "Admin access required"
+    );
+});
+
+// Test 17: Allow admin to create a job
+test("POST /api/jobs should allow admin users", async () => {
+    await pool.execute(
+        "UPDATE users SET role = 'admin' WHERE id = ?",
+        [testUserId]
+    );
+
+    try {
+        const response = await request(app)
+            .post("/api/jobs")
+            .set("Authorization", `Bearer ${authToken}`)
+            .send({
+                title: "GlobalHire Day48 RBAC Test Job",
+                country: "India",
+                salary: 50000
+            });
+
+        testJobId = response.body.data?.id;
+
+        assert.equal(response.status, 201);
+        assert.equal(response.body.status, "success");
+        assert.equal(
+            response.body.message,
+            "Job created successfully"
+        );
+
+        assert.ok(testJobId);
+
+    } finally {
+        await pool.execute(
+            "UPDATE users SET role = 'user' WHERE id = ?",
+            [testUserId]
+        );
+    }
+});
+
+// Clean up temporary test data and close database pool
 after(async () => {
     try {
+        if (testJobId) {
+            await pool.execute(
+                "DELETE FROM jobs WHERE id = ?",
+                [testJobId]
+            );
+        }
+
         if (testUserId) {
+            await pool.execute(
+                "UPDATE users SET role = 'user' WHERE id = ?",
+                [testUserId]
+            );
+
             await pool.execute(
                 "DELETE FROM users WHERE id = ? AND email = ?",
                 [testUserId, testUser.email]

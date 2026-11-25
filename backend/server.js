@@ -17,7 +17,8 @@ const PORT = 3000;
  */
 
 
-function authenticateToken(req, res, next) {
+
+async function authenticateToken(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -43,31 +44,67 @@ function authenticateToken(req, res, next) {
         });
     }
 
-    jwt.verify(
-        token,
-        process.env.JWT_SECRET,
-        {
-            issuer: "globalhire",
-            audience: "globalhire-users"
-        },
-        (error, decoded) => {
-            if (error) {
-                return res.status(401).json({
-                    status: "error",
-                    message: "Invalid or expired authentication token"
-                });
+    try {
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET,
+            {
+                issuer: "globalhire",
+                audience: "globalhire-users"
             }
+        );
 
-            req.user = {
-                id: decoded.sub,
-                email: decoded.email
-            };
+        const [users] = await pool.execute(
+            "SELECT id, email, role FROM users WHERE id = ?",
+            [decoded.sub]
+        );
 
-            next();
+        if (users.length === 0) {
+            return res.status(401).json({
+                status: "error",
+                message: "User account not found"
+            });
         }
-    );
+
+        req.user = {
+            id: users[0].id,
+            email: users[0].email,
+            role: users[0].role
+        };
+
+        return next();
+
+    } catch (error) {
+        if (
+            error.name === "JsonWebTokenError" ||
+            error.name === "TokenExpiredError" ||
+            error.name === "NotBeforeError"
+        ) {
+            return res.status(401).json({
+                status: "error",
+                message: "Invalid or expired authentication token"
+            });
+        }
+
+        console.error("Authentication failed:", error.message);
+
+        return res.status(500).json({
+            status: "error",
+            message: "Unable to authenticate user"
+        });
+    }
 }
 
+function authorizeAdmin(req, res, next) {
+    if (req.user.role !== "admin") {
+        return res.status(403).json({
+            status: "error",
+            message: "Admin access required"
+        });
+    }
+
+    next();
+}
 
 function validateJobId(id) {
     const numId = Number(id);
@@ -460,8 +497,7 @@ app.post("/api/auth/login", async (req, res, next) => {
 });
 
 
-app.post("/api/jobs", async (req, res, next) => {
-    try {
+app.post("/api/jobs", authenticateToken, authorizeAdmin, async (req, res, next) => {    try {
         // Ensure the request body is a JSON object.
         if (
             req.body === null ||
@@ -533,8 +569,7 @@ app.post("/api/jobs", async (req, res, next) => {
     }
 });
 
-app.put("/api/jobs/:id", async (req, res, next) => {
-    try {
+app.put("/api/jobs/:id", authenticateToken, authorizeAdmin, async (req, res, next) => {    try {
         const validationError = validateJobId(req.params.id);
 
         if (validationError) {
@@ -626,8 +661,7 @@ app.put("/api/jobs/:id", async (req, res, next) => {
     }
 });
 
-app.delete("/api/jobs/:id", async (req, res, next) => {
-    try {
+app.delete("/api/jobs/:id", authenticateToken, authorizeAdmin, async (req, res, next) => {    try {
         const validationError = validateJobId(req.params.id);
 
         if (validationError) {

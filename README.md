@@ -403,9 +403,9 @@ The long-term learning plan also includes:
 
 **Project:** GlobalHire
 
-**Current milestone:** Day 41 – PUT and DELETE API Testing
+**Current milestone:** Day 49 – RBAC Authorization Testing
 
-**Latest verified backend result:** Successfully retrieved 8 job records through the `/api/jobs` endpoint.
+**Latest verified backend test result:** 24 passed, 0 failed.
 
 **Backend:** Node.js and Express
 
@@ -413,14 +413,15 @@ The long-term learning plan also includes:
 
 **Database:** MySQL/MariaDB
 
+**Authentication:** JWT
+
+**Authorization:** Role-Based Access Control (RBAC)
+
 **Version control:** Git and GitHub
 
-**Latest verified backend result:** Successfully retrieved 7 job records through the `/api/jobs` endpoint.
+**Latest pushed implementation commit:** `d45c49b`
 
-**Latest implementation commit:** `d8634a5`
-
-**Current priority:** Continue backend development, testing, and application improvements.
-
+**Current priority:** Continue backend development, testing, security, and application improvements.
 ---
 
 ## Learning Philosophy

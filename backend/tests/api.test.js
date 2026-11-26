@@ -313,6 +313,142 @@ test("POST /api/jobs should allow admin users", async () => {
     }
 });
 
+
+// Test 18: Reject job update without an authentication token
+test("PUT /api/jobs/:id should reject requests without a token", async () => {
+    const response = await request(app)
+        .put("/api/jobs/1")
+        .send({
+            title: "Updated Test Job",
+            country: "India",
+            salary: 60000
+        });
+
+    assert.equal(response.status, 401);
+    assert.equal(
+        response.body.message,
+        "Authentication token required"
+    );
+});
+
+
+// Test 19: Reject job update by a normal user
+test("PUT /api/jobs/:id should reject normal users", async () => {
+    const response = await request(app)
+        .put("/api/jobs/1")
+        .set("Authorization", `Bearer ${authToken}`)
+        .send({
+            title: "Unauthorized Updated Job",
+            country: "India",
+            salary: 60000
+        });
+
+    assert.equal(response.status, 403);
+    assert.equal(
+        response.body.message,
+        "Admin access required"
+    );
+});
+
+// Test 20: Allow admin to update a job
+test("PUT /api/jobs/:id should allow admin users", async () => {
+    await pool.execute(
+        "UPDATE users SET role = 'admin' WHERE id = ?",
+        [testUserId]
+    );
+
+    try {
+        const response = await request(app)
+.put(`/api/jobs/${testJobId}`)            .set("Authorization", `Bearer ${authToken}`)
+            .send({
+                title: "GlobalHire Day49 Updated Job",
+                country: "India",
+                salary: 75000
+            });
+
+        assert.equal(response.status, 200);
+        assert.equal(response.body.status, "success");
+        assert.equal(
+            response.body.message,
+            "Job updated successfully"
+        );
+
+        assert.equal(
+            response.body.data.title,
+            "GlobalHire Day49 Updated Job"
+        );
+
+    } finally {
+        await pool.execute(
+            "UPDATE users SET role = 'user' WHERE id = ?",
+            [testUserId]
+        );
+    }
+});
+
+// Test 21: Reject job deletion without an authentication token
+test("DELETE /api/jobs/:id should reject requests without a token", async () => {
+    const response = await request(app)
+        .delete("/api/jobs/1");
+
+    assert.equal(response.status, 401);
+    assert.equal(
+        response.body.message,
+        "Authentication token required"
+    );
+});
+
+// Test 22: Reject job deletion by a normal user
+test("DELETE /api/jobs/:id should reject normal users", async () => {
+    const response = await request(app)
+        .delete(`/api/jobs/${testJobId}`)
+        .set("Authorization", `Bearer ${authToken}`);
+
+    assert.equal(response.status, 403);
+    assert.equal(
+        response.body.message,
+        "Admin access required"
+    );
+});
+
+
+// Test 23: Allow admin to delete a job
+test("DELETE /api/jobs/:id should allow admin users", async () => {
+    await pool.execute(
+        "UPDATE users SET role = 'admin' WHERE id = ?",
+        [testUserId]
+    );
+
+    try {
+        const response = await request(app)
+            .delete(`/api/jobs/${testJobId}`)
+            .set("Authorization", `Bearer ${authToken}`);
+
+        assert.equal(response.status, 200);
+        assert.equal(response.body.status, "success");
+        assert.equal(
+            response.body.message,
+            "Job deleted successfully"
+        );
+
+        const [jobs] = await pool.execute(
+            "SELECT id FROM jobs WHERE id = ?",
+            [testJobId]
+        );
+
+        assert.equal(jobs.length, 0);
+
+        // Prevent cleanup from attempting to delete it again.
+        testJobId = null;
+
+    } finally {
+        await pool.execute(
+            "UPDATE users SET role = 'user' WHERE id = ?",
+            [testUserId]
+        );
+    }
+});
+
 // Clean up temporary test data and close database pool
 after(async () => {
     try {

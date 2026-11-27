@@ -93,6 +93,18 @@ test("GET /api/search should return all jobs", async () => {
     assert.ok(Array.isArray(response.body));
 });
 
+// Test: Reject a non-string title search parameter
+test("GET /api/search should reject an invalid title parameter", async () => {
+    const response = await request(app)
+        .get("/api/search?title=JavaScript&title=Python");
+
+    assert.equal(response.status, 400);
+    assert.equal(response.body.status, "error");
+});
+
+
+
+
 // Test 7: Reject request without authentication token
 test("GET /api/auth/me should reject requests without a token", async () => {
     const response = await request(app).get("/api/auth/me");
@@ -359,7 +371,8 @@ test("PUT /api/jobs/:id should allow admin users", async () => {
 
     try {
         const response = await request(app)
-.put(`/api/jobs/${testJobId}`)            .set("Authorization", `Bearer ${authToken}`)
+      .put(`/api/jobs/${testJobId}`)
+      .set("Authorization", `Bearer ${authToken}`)
             .send({
                 title: "GlobalHire Day49 Updated Job",
                 country: "India",

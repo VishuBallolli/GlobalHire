@@ -262,23 +262,37 @@ app.get("/api/jobs/:id", async (req, res, next) => {
 
 
 
+
 app.get("/api/search", async (req, res, next) => {
     try {
-        const title = req.query.title?.trim() || undefined;
-        const country = req.query.country?.trim() || undefined;
+        const { title, country } = req.query;
+
+        // Validate search parameters
+        if (
+            (title !== undefined && typeof title !== "string") ||
+            (country !== undefined && typeof country !== "string")
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "Title and country must be strings"
+            });
+        }
+
+        const searchTitle = title?.trim() || undefined;
+        const searchCountry = country?.trim() || undefined;
 
         let sql = "SELECT id, title, country, salary FROM jobs";
         const params = [];
         const conditions = [];
 
-        if (title) {
+        if (searchTitle) {
             conditions.push("title LIKE ?");
-            params.push(`%${title}%`);
+            params.push(`%${searchTitle}%`);
         }
 
-        if (country) {
+        if (searchCountry) {
             conditions.push("country LIKE ?");
-            params.push(`%${country}%`);
+            params.push(`%${searchCountry}%`);
         }
 
         if (conditions.length > 0) {
@@ -294,6 +308,7 @@ app.get("/api/search", async (req, res, next) => {
         next(error);
     }
 });
+
 
 
 app.get("/api/health", function(req, res) {

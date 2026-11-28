@@ -54,6 +54,30 @@ test("GET /api/jobs should return a list of jobs", async () => {
     assert.equal(response.status, 200);
     assert.ok(Array.isArray(response.body));
 });
+// Test 2.1: Get jobs with pagination
+test("GET /api/jobs should support pagination", async () => {
+    const response = await request(app).get("/api/jobs?page=1&limit=5");
+
+    assert.equal(response.status, 200);
+    assert.ok(Array.isArray(response.body));
+    assert.ok(response.body.length <= 5);
+});
+
+// Test 2.2: Reject an invalid page number
+test("GET /api/jobs should reject page zero", async () => {
+    const response = await request(app).get("/api/jobs?page=0&limit=5");
+
+    assert.equal(response.status, 400);
+    assert.equal(response.body.status, "error");
+});
+
+// Test 2.3: Reject a limit greater than 100
+test("GET /api/jobs should reject limit greater than 100", async () => {
+    const response = await request(app).get("/api/jobs?page=1&limit=101");
+
+    assert.equal(response.status, 400);
+    assert.equal(response.body.status, "error");
+});
 
 // Test 3: Get a job using a valid ID
 test("GET /api/jobs/:id should return a job", async () => {

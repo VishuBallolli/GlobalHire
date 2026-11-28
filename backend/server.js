@@ -165,16 +165,41 @@ app.get("/", function(req, res) {
 
 app.get("/api/jobs", async function(req, res, next) {
     try {
-        const [rows] = await pool.query(
-            "SELECT id, title, country, salary FROM jobs ORDER BY id"
-        );
+        const { page, limit } = req.query;
+
+        let sql = "SELECT id, title, country, salary FROM jobs ORDER BY id";
+        let params = [];
+
+        if (page !== undefined || limit !== undefined) {
+            const currentPage = Number(page ?? 1);
+            const pageLimit = Number(limit ?? 10);
+
+            if (
+                !Number.isInteger(currentPage) ||
+                !Number.isInteger(pageLimit) ||
+                currentPage < 1 ||
+                pageLimit < 1 ||
+                pageLimit > 100
+            ) {
+                return res.status(400).json({
+                    status: "error",
+                    message: "Page and limit must be positive integers. Limit cannot exceed 100."
+                });
+            }
+
+            const offset = (currentPage - 1) * pageLimit;
+
+            sql += " LIMIT ? OFFSET ?";
+            params = [pageLimit, offset];
+        }
+
+        const [rows] = await pool.query(sql, params);
 
         res.json(rows);
     } catch (error) {
         next(error);
     }
 });
-
 
 app.get("/api/jobs/recommendations", authenticateToken, async (req, res) => {
     const userId = req.user.id;
